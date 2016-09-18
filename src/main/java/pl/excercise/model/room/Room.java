@@ -1,24 +1,15 @@
 package pl.excercise.model.room;
 
 
-import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Entity
 public class Room {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    long Id;
-
-    @Embedded
     private RoomType roomType;
 
-    @ElementCollection
     private List<LocalDate> bookedDates;
 
-    @Embedded
     private WindowsExposure windowsExposure;
 
     public RoomType getRoomType() {
@@ -64,7 +55,6 @@ public class Room {
     @Override
     public String toString() {
         return "Room{" +
-                "Id=" + Id +
                 ", roomType=" + roomType +
                 ", bookedDates=" + bookedDates +
                 ", windowsExposure=" + windowsExposure +

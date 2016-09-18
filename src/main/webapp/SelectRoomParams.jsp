@@ -52,10 +52,10 @@
             <label class="col-lg-3 control-label"><b>Room exposure</b></label>
 
             <div class="col-lg-6">
-                <select name="roomExposure"  class="selectpicker show-tick form-control" data-live-search="true">
-                    <c:forEach items="${roomExposure}" var="roomExposure">
+                <select name="windowsExposure"  class="selectpicker show-tick form-control" data-live-search="true">
+                    <c:forEach items="${windowsExposure}" var="windowsExposure">
                         <option
-                                value="${roomExposure}"><c:out value="${roomExposure}"/></option>
+                                value="${windowsExposure}"><c:out value="${windowsExposure}"/></option>
                     </c:forEach>
                 </select>
 

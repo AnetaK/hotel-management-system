@@ -2,7 +2,7 @@ package pl.excercise.web;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pl.excercise.model.room.Room;
+import pl.excercise.model.room.RoomEntity;
 import pl.excercise.service.RandomRooms;
 
 import javax.annotation.PostConstruct;
@@ -24,7 +24,7 @@ public class RoomsListCache {
     private static final int ROOMS_COUNT_INITIALLY_BOOKED = 30;
     private static final int ROOMS_COUNT = 30;
 
-    private List<Room> roomsList = new ArrayList<>();
+    private List<RoomEntity> roomsList = new ArrayList<>();
 
 
     @PersistenceContext
@@ -32,9 +32,10 @@ public class RoomsListCache {
 
     @PostConstruct
     public void initialize() {
-        Room room = new Room();
+
 
         for (int i = 0; i < ROOMS_COUNT_INITIALLY_BOOKED; i++) {
+            RoomEntity room = new RoomEntity();
             room.withRoomType(new RandomRooms().getRandomType())
                     .withWindowsExposure(new RandomRooms().getRandomExposure())
                     .withBookedDates(new RandomRooms().getRandomDates())
@@ -46,6 +47,7 @@ public class RoomsListCache {
         }
 
         for (int i = 0; i < ROOMS_COUNT; i++) {
+            RoomEntity room = new RoomEntity();
             room.withRoomType(new RandomRooms().getRandomType())
                     .withWindowsExposure(new RandomRooms().getRandomExposure())
                     .build();
@@ -59,7 +61,7 @@ public class RoomsListCache {
 
     }
 
-    public List<Room> getInitializedRooms() {
+    public List<RoomEntity> getInitializedRooms() {
         return roomsList;
     }
 

@@ -3,6 +3,9 @@ package pl.excercise.web;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pl.excercise.model.room.ParametrizedRoom;
+import pl.excercise.model.room.RoomEntity;
+import pl.excercise.service.FindAvailableRooms;
 
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
@@ -12,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 
 @WebServlet(urlPatterns = "/availableRooms")
@@ -20,6 +24,9 @@ public class AvailableRoomsForPeriodServlet extends HttpServlet{
 
     @EJB
     RoomsListCache cache;
+
+    @EJB
+    FindAvailableRooms findRooms;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -32,6 +39,17 @@ public class AvailableRoomsForPeriodServlet extends HttpServlet{
         String availableTo = request.getParameter("availableTo");
 
 //        TODO dodaj walidację daty - from nie może byc późniejsza niż to
+
+        ParametrizedRoom parametrizedRoom = new ParametrizedRoom()
+                .withRoomType(roomType)
+                .withRoomExposure(roomExposure)
+                .withAvailableFrom(availableFrom)
+                .withAvailableTo(availableTo)
+                .build();
+
+        List<RoomEntity> availableRooms = findRooms.find(parametrizedRoom);
+
+
 
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("ViewRooms.jsp");
