@@ -8,10 +8,10 @@
     <div class="container">
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li><a href="/hotel-mgmt-system">Strona domowa</a></li>
+                <li><a href="/hotel-mgmt-system">Home</a></li>
             </ul>
             <ul class="nav navbar-nav">
-                <li><a href="/hotel-mgmt-system/contact">Kontakt</a></li>
+                <li><a href="/hotel-mgmt-system/contact">Contact</a></li>
             </ul>
         </div>
     </div>

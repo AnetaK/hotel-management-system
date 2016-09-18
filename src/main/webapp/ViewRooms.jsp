@@ -19,7 +19,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
-    <title>Contact</title>
+    <title>Available rooms for period of time</title>
 
 </head>
 <body>
@@ -29,12 +29,17 @@
 <div class="container lower forms-template">
     <h1>Hotel Management System HireMe</h1>
 
-    <h3>Contact</h3>
+    <h3>Available rooms</h3>
 
-    <c:out value="${hotelName}"/><br>
-    <c:out value="${street}"/><br>
-    <c:out value="${zipcode}"/><br>
-    <c:out value="${city}"/>
+    <div class="col-lg-6">
+        <select name="brand" id="basic" class="selectpicker show-tick form-control" data-live-search="true">
+            <c:forEach items="${rooms}" var="rooms">
+                <option
+                        value="${rooms.roomType};${rooms.windowsExposure}"/>
+            </c:forEach>
+        </select>
+
+    </div>
 
 </div>
 

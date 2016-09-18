@@ -21,11 +21,10 @@ import java.util.List;
 public class RoomsListCache {
 
     private static final Logger LOGGER = LogManager.getLogger(HotelParamsCache.class);
+    private static final int ROOMS_COUNT_INITIALLY_BOOKED = 30;
+    private static final int ROOMS_COUNT = 30;
 
     private List<Room> roomsList = new ArrayList<>();
-
-
-
 
 
     @PersistenceContext
@@ -33,33 +32,36 @@ public class RoomsListCache {
 
     @PostConstruct
     public void initialize() {
-
-        for (Room r:
-             roomsList) {
-            em.persist(r);
-        }
-
-        LOGGER.debug("{} random rooms persisted to DP",roomsList.size());
-
-    }
-
-    public List<Room> getInitialRooms() {
-        return roomsList;
-    }
-
-
-    public void createRooms(){
         Room room = new Room();
 
-        for(int i=0;i<30;i++){
+        for (int i = 0; i < ROOMS_COUNT_INITIALLY_BOOKED; i++) {
             room.withRoomType(new RandomRooms().getRandomType())
                     .withWindowsExposure(new RandomRooms().getRandomExposure())
                     .withBookedDates(new RandomRooms().getRandomDates())
                     .build();
+
+            em.persist(room);
+
+            roomsList.add(room);
         }
+
+        for (int i = 0; i < ROOMS_COUNT; i++) {
+            room.withRoomType(new RandomRooms().getRandomType())
+                    .withWindowsExposure(new RandomRooms().getRandomExposure())
+                    .build();
+
+            em.persist(room);
+
+            roomsList.add(room);
+        }
+
+        LOGGER.debug("{} random rooms persisted to DP", roomsList.size());
 
     }
 
+    public List<Room> getInitializedRooms() {
+        return roomsList;
+    }
 
 
 }

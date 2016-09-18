@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-
 @WebServlet(urlPatterns = "/contact")
 public class ContactServlet extends HttpServlet {
 
