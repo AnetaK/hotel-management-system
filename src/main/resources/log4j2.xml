@@ -2,24 +2,12 @@
 <Configuration status="WARN" name="AppLogger">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%highlight{%-5sequenceNumber | %d | %-18marker [%-5level] %-27logger{1.} [%t:%line] %enc{%msg}%n%throwable}{"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-
-        <RollingFile name="LogFile" fileName="logs/app.log"
-                     filePattern="logs/$${date:yyyy-MM}/app-%d{yyyy-MM-dd}.log">
-            <PatternLayout>
-                <Pattern>%d{HH:mm:ss,SSS} %p %c{1.} [%t] %m%n</Pattern>
-            </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy/>
-                <SizeBasedTriggeringPolicy size="100 MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="10"/>
-        </RollingFile>
     </Appenders>
     <Loggers>
         <Root level="trace">
-            <AppenderRef ref="LogFile"/>
+            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
 </Configuration>

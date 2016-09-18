@@ -1,7 +1,7 @@
 package pl.excercise.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import pl.excercise.model.Address;
 import pl.excercise.model.Location;
 
@@ -31,7 +31,7 @@ public class HotelParamsCache {
                     .build())
             .build();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HotelParamsCache.class);
+    private static final Logger LOGGER = LogManager.getLogger(HotelParamsCache.class);
 
     @PostConstruct
     public void initialize() {

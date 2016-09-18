@@ -1,6 +1,7 @@
 package pl.excercise.web;
 
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import pl.excercise.model.Location;
 
 import javax.ejb.EJB;
@@ -15,7 +16,7 @@ import java.io.IOException;
 @WebServlet(urlPatterns = "/contact")
 public class ContactServlet extends HttpServlet {
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ContactServlet.class);
+    private static final Logger LOGGER = LogManager.getLogger(ContactServlet.class);
 
     @EJB
     HotelParamsCache cache;
