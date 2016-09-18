@@ -30,13 +30,14 @@
     <h1>System do zarządzania rezerwacjami w Hotelu</h1>
 
     <h3>Date kontaktowe</h3>
-    ${city}
-    <c:out value="${hotelName}"/>
-    <c:out value="${street}"/>
-    <c:out value="${zipcode}"/>
+
+    <c:out value="${hotelName}"/><br>
+    <c:out value="${street}"/><br>
+    <c:out value="${zipcode}"/><br>
     <c:out value="${city}"/>
 
 </div>
 
 </body>
 </html>
+

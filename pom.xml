@@ -9,6 +9,7 @@
     <url>http://maven.apache.org</url>
 
     <dependencies>
+        <!--logger config-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -35,6 +36,8 @@
             <version>2.6.2</version>
             <scope>runtime</scope>
         </dependency>
+
+
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -94,9 +97,7 @@
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
-                <version>1.1.0.Alpha7</version>
-
-
+                <version>1.1.0.Alpha11</version>
             </plugin>
         </plugins>
     </build>
@@ -104,7 +105,10 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <wildfly.add-user>Admin1:Admin1:group:ManagementRealm:false</wildfly.add-user>
+        <wildfly.username>admin</wildfly.username>
+        <wildfly.password>admin</wildfly.password>
+        <wildfly.add-user>${wildfly.username}:${wildfly.password}:group:ManagementRealm:false</wildfly.add-user>
     </properties>
 </project>
