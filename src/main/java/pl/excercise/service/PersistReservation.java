@@ -24,7 +24,7 @@ public class PersistReservation {
     @PersistenceContext
     EntityManager em;
 
-    public void persist(Guest guest, ParametrizedRoom room, int id){
+    public Reservation persist(Guest guest, ParametrizedRoom room, int id){
 
         LocalDate startDate = LocalDate.parse(room.getAvailableFrom());
         LocalDate endDate = LocalDate.parse(room.getAvailableTo());
@@ -53,6 +53,8 @@ public class PersistReservation {
         em.persist(reservation);
 
         LOGGER.debug("Reservation persisted succesfully");
+
+        return reservation;
     }
 
 

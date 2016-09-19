@@ -4,17 +4,21 @@ package pl.excercise.web;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pl.excercise.model.Guest;
+import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
+import pl.excercise.service.ExtractReservations;
 import pl.excercise.service.PersistReservation;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(urlPatterns = "/bookRoom")
 public class BookingServlet extends HttpServlet{
@@ -27,6 +31,9 @@ public class BookingServlet extends HttpServlet{
     @EJB
     PersistReservation persistReservation;
 
+    @EJB
+    ExtractReservations extractReservations;
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -34,7 +41,7 @@ public class BookingServlet extends HttpServlet{
         String roomArray[] = request.getParameter("availableRooms").split(";");
         String availableFrom = request.getParameter("availableFrom");
         String availableTo = request.getParameter("availableTo");
-        LOGGER.trace("Reservation for perion from: {} to: {}",availableFrom,availableTo);
+        LOGGER.trace("Reservation for period from: {} to: {}",availableFrom,availableTo);
         ParametrizedRoom room = new ParametrizedRoom()
                 .withRoomType(roomArray[1])
                 .withWindowsExposure(roomArray[2])
@@ -52,10 +59,18 @@ public class BookingServlet extends HttpServlet{
                 .withLastName(lastName)
                 .build();
 
-        persistReservation.persist(guest,room,id);
+        Reservation reservation = persistReservation.persist(guest, room, id);
 
         LOGGER.debug("Room is booked");
-        response.sendRedirect("Contact.jsp");
+
+        List<Reservation> reservationList = extractReservations.extract();
+
+        request.getSession().setAttribute("reservation",reservationList);
+        request.getSession().setAttribute("firstName",firstName);
+        request.getSession().setAttribute("lastName",lastName);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("ViewReservations.jsp");
+        dispatcher.forward(request, response);
 
 
     }
