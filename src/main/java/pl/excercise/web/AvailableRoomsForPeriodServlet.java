@@ -23,9 +23,6 @@ public class AvailableRoomsForPeriodServlet extends HttpServlet{
     private static final Logger LOGGER = LogManager.getLogger(HotelParamsCache.class);
 
     @EJB
-    RoomsListCache cache;
-
-    @EJB
     FindAvailableRooms findRooms;
 
     @Override
@@ -49,7 +46,7 @@ public class AvailableRoomsForPeriodServlet extends HttpServlet{
 
         List<RoomEntity> availableRooms = findRooms.find(parametrizedRoom);
 
-
+        request.setAttribute("availableRooms",availableRooms);
 
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("ViewRooms.jsp");

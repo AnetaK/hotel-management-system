@@ -31,15 +31,23 @@
 
     <h3>Available rooms</h3>
 
-    <div class="col-lg-6">
-        <select name="brand" id="basic" class="selectpicker show-tick form-control" data-live-search="true">
-            <c:forEach items="${rooms}" var="rooms">
-                <option
-                        value="${rooms.roomType};${rooms.windowsExposure}"/>
-            </c:forEach>
-        </select>
 
+    <div class="form-group row lower">
+
+        <div class="col-lg-6">
+            <select name="availableRooms"  class="selectpicker show-tick form-control" data-live-search="true">
+                <c:forEach items="${availableRooms}" var="availableRooms">
+                    <option
+                            value="${availableRooms.roomType};${availableRooms.windowsExposure}">
+                        Room type: <c:out value="${availableRooms.roomType}"/>. Windows exposure: <c:out value="${availableRooms.windowsExposure}"/></option>
+                </c:forEach>
+            </select>
+
+        </div>
     </div>
+    <button type="submit"
+            name="book">Book
+    </button>
 
 </div>
 

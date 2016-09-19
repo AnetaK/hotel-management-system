@@ -115,7 +115,7 @@
         </div>
 
         <button type="submit"
-                name="search">Check available dates
+                name="search">Check available dates for room
         </button>
         <%--todo: allRoomsServlet--%>
     </form>
