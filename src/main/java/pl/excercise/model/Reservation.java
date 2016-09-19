@@ -11,7 +11,7 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne
+    @Embedded
     private Guest guest;
 
     @ManyToOne
@@ -35,28 +35,31 @@ public class Reservation {
         return cancelledFlag;
     }
 
+    public Reservation() {
+    }
+
     public Reservation(Guest guest, RoomEntity room, int cancelledFlag) {
         this.guest = guest;
         this.room = room;
         this.cancelledFlag = cancelledFlag;
     }
 
-    public Reservation setGuest(Guest guest) {
+    public Reservation withGuest(Guest guest) {
         this.guest = guest;
         return this;
     }
 
-    public Reservation setRoom(RoomEntity room) {
+    public Reservation withRoom(RoomEntity room) {
         this.room = room;
         return this;
     }
 
-    public Reservation setCancelledFlag(int cancelledFlag) {
+    public Reservation withCancelledFlag(int cancelledFlag) {
         this.cancelledFlag = cancelledFlag;
         return this;
     }
 
-    public Reservation createReservation() {
+    public Reservation build() {
         return new Reservation(guest, room, cancelledFlag);
     }
 

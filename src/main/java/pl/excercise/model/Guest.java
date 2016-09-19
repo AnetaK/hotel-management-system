@@ -1,23 +1,15 @@
 package pl.excercise.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.enterprise.context.SessionScoped;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
 
-@Entity
-public class Guest {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+@SessionScoped
+@Embeddable
+public class Guest implements Serializable{
 
     private String firstName;
     private String lastName;
-
-    public Long getId() {
-        return id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -25,6 +17,9 @@ public class Guest {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public Guest() {
     }
 
     public Guest(String firstName, String lastName) {
@@ -49,7 +44,6 @@ public class Guest {
     @Override
     public String toString() {
         return "Guest{" +
-                "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 '}';

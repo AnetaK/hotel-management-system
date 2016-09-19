@@ -9,7 +9,7 @@ public class RoomEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long Id;
+    long id;
 
     private String roomType;
 
@@ -31,7 +31,11 @@ public class RoomEntity {
     }
 
     public long getId() {
-        return Id;
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public RoomEntity() {
@@ -66,7 +70,7 @@ public class RoomEntity {
     @Override
     public String toString() {
         return "Room{" +
-                "Id=" + Id +
+                "id=" + id +
                 ", roomType=" + roomType +
                 ", bookedDates=" + bookedDates +
                 ", windowsExposure=" + windowsExposure +

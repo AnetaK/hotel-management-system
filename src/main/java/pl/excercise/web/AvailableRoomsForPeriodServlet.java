@@ -20,7 +20,7 @@ import java.util.List;
 
 @WebServlet(urlPatterns = "/availableRooms")
 public class AvailableRoomsForPeriodServlet extends HttpServlet{
-    private static final Logger LOGGER = LogManager.getLogger(HotelParamsCache.class);
+    private static final Logger LOGGER = LogManager.getLogger(AvailableRoomsForPeriodServlet.class);
 
     @EJB
     FindAvailableRooms findRooms;
@@ -46,6 +46,8 @@ public class AvailableRoomsForPeriodServlet extends HttpServlet{
 
         List<RoomEntity> availableRooms = findRooms.find(parametrizedRoom);
 
+        request.setAttribute("availableFrom",availableFrom);
+        request.setAttribute("availableTo",availableTo);
         request.setAttribute("availableRooms",availableRooms);
 
 
@@ -53,4 +55,6 @@ public class AvailableRoomsForPeriodServlet extends HttpServlet{
         dispatcher.forward(request, response);
 
     }
+
+
 }

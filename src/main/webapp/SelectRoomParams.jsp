@@ -31,7 +31,7 @@
 
     <h3>Select parameters for room filtering</h3>
 
-    <form metod="GET" action="availableRooms">
+    <form method="GET" action="availableRooms">
 
         <div class="form-group row lower">
             <label class="col-lg-3 control-label"><b>Room type</b></label>
@@ -97,7 +97,7 @@
 
     <br><br>
 
-    <form metod="GET" action="allRooms">
+    <form method="GET" action="allRooms">
 
         <h3>Or select room from list</h3>
         <div class="form-group row lower">
