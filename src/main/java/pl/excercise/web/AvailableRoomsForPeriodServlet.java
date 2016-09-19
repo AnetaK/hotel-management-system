@@ -34,7 +34,7 @@ public class AvailableRoomsForPeriodServlet extends HttpServlet{
 
 
         String roomType = request.getParameter("roomType");
-        String roomExposure = request.getParameter("roomExposure");
+        String windowsExposure = request.getParameter("windowsExposure");
         String availableFrom = request.getParameter("availableFrom");
         String availableTo = request.getParameter("availableTo");
 
@@ -42,7 +42,7 @@ public class AvailableRoomsForPeriodServlet extends HttpServlet{
 
         ParametrizedRoom parametrizedRoom = new ParametrizedRoom()
                 .withRoomType(roomType)
-                .withRoomExposure(roomExposure)
+                .withWindowsExposure(windowsExposure)
                 .withAvailableFrom(availableFrom)
                 .withAvailableTo(availableTo)
                 .build();

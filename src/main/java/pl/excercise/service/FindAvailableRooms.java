@@ -41,7 +41,7 @@ public class FindAvailableRooms {
             List<RoomEntity> roomsTmp = em.createQuery("select r from RoomEntity r " +
                     "where r.roomType=:roomType " +
                     "and r.windowsExposure=:windowsExposure " +
-                    "and not :date member of r.bookedDates ")
+                    "and not :date member of r.bookedDates " )
                     .setParameter("roomType", parametrizedRoom.getRoomType())
                     .setParameter("windowsExposure", parametrizedRoom.getWindowsExposure())
                     .setParameter("date", date.toString())
@@ -62,15 +62,13 @@ public class FindAvailableRooms {
                     collect.addAll(rooms.stream()
                             .filter(r1 -> r1.equals(r))
                             .collect(Collectors.toList()));
-                    collect.addAll(rooms.stream()
-                            .filter(r1 -> r1.getBookedDates().equals(Collections.emptyList()))
-                            .collect(Collectors.toList()));
 
                 }
                 rooms = collect;
             }
 
         }
+
         LOGGER.debug("Number of rooms that meet the conditions: " + rooms.size());
         LOGGER.trace("Found rooms: " + rooms.toString());
 

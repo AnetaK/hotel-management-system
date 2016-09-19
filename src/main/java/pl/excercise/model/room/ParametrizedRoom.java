@@ -23,8 +23,8 @@ public class ParametrizedRoom {
         return this;
     }
 
-    public ParametrizedRoom withRoomExposure(String roomExposure) {
-        this.windowsExposure = roomExposure;
+    public ParametrizedRoom withWindowsExposure(String windowsExposure) {
+        this.windowsExposure = windowsExposure;
         return this;
     }
 

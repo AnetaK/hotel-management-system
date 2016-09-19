@@ -33,7 +33,7 @@ public class SelectRoomParams extends HttpServlet{
         }
 
         request.setAttribute("roomType", Arrays.asList(RoomType.StandardRoom, RoomType.SpecialRoom, RoomType.ExclusiveRoom));
-        request.setAttribute("roomExposure",Arrays.asList(WindowsExposure.NORTH,WindowsExposure.WEST,WindowsExposure.SOUTH,WindowsExposure.EAST));
+        request.setAttribute("windowsExposure",Arrays.asList(WindowsExposure.NORTH,WindowsExposure.WEST,WindowsExposure.SOUTH,WindowsExposure.EAST));
         request.setAttribute("calendar",dates);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("SelectRoomParams.jsp");
