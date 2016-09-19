@@ -94,6 +94,32 @@
                 name="search">Search
         </button>
     </form>
+
+    <br><br>
+
+    <form metod="GET" action="allRooms">
+
+        <h3>Or select room from list</h3>
+        <div class="form-group row lower">
+
+            <div class="col-lg-6">
+                <select name="allRooms"  class="selectpicker show-tick form-control" data-live-search="true">
+                    <c:forEach items="${allRooms}" var="allRooms">
+                        <option
+                                value="${allRooms.roomType};${allRooms.windowsExposure}">
+                            Room type: <c:out value="${allRooms.roomType}"/>. Windows exposure: <c:out value="${allRooms.windowsExposure}"/></option>
+                    </c:forEach>
+                </select>
+
+            </div>
+        </div>
+
+        <button type="submit"
+                name="search">Check available dates
+        </button>
+        <%--todo: allRoomsServlet--%>
+    </form>
+
 </div>
 
 </body>

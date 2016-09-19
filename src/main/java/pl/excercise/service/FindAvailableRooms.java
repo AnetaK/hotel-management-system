@@ -4,17 +4,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pl.excercise.model.room.ParametrizedRoom;
 import pl.excercise.model.room.RoomEntity;
-import pl.excercise.model.room.RoomType;
-import pl.excercise.web.HotelParamsCache;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -28,45 +24,27 @@ public class FindAvailableRooms {
 
     public List<RoomEntity> find(ParametrizedRoom parametrizedRoom) {
         LOGGER.trace("Searching in DB rooms for parameters" + parametrizedRoom.toString());
-        List<RoomEntity> rooms = new ArrayList<>();
+
+        List<RoomEntity> rooms = em.createQuery("select r from RoomEntity r " +
+                "where r.roomType=:roomType " +
+                "and r.windowsExposure=:windowsExposure ")
+                .setParameter("roomType", parametrizedRoom.getRoomType())
+                .setParameter("windowsExposure", parametrizedRoom.getWindowsExposure())
+                .getResultList();
+
+        LOGGER.debug("Number of rooms that meet the type and exposure conditions: " + rooms.size());
 
         LocalDate startDate = LocalDate.parse(parametrizedRoom.getAvailableFrom());
         LocalDate endDate = LocalDate.parse(parametrizedRoom.getAvailableTo());
         long daysBetween = DAYS.between(startDate, endDate);
         LOGGER.trace("NumberOfDays for calculation" + daysBetween);
 
-        for (long i = 0; i < daysBetween + 1; i++) {
+        List<String> datesRange = new ArrayList<>();
 
-            LocalDate date = startDate.minusDays(i);
-            List<RoomEntity> roomsTmp = em.createQuery("select r from RoomEntity r " +
-                    "where r.roomType=:roomType " +
-                    "and r.windowsExposure=:windowsExposure " +
-                    "and not :date member of r.bookedDates " )
-                    .setParameter("roomType", parametrizedRoom.getRoomType())
-                    .setParameter("windowsExposure", parametrizedRoom.getWindowsExposure())
-                    .setParameter("date", date.toString())
-                    .getResultList();
+        for (int i = 0; i < daysBetween; i++) {
+            String date = startDate.plusDays(i).toString();
 
-            LOGGER.trace("Rooms tmp: " + roomsTmp.toString());
-
-            if (i == 0) {
-                rooms.addAll(roomsTmp);
-
-            } else {
-                List<RoomEntity> collect = new ArrayList<>();
-                LOGGER.trace("Rooms before lambda: " + rooms.toString());
-
-                for (RoomEntity r :
-                        roomsTmp) {
-
-                    collect.addAll(rooms.stream()
-                            .filter(r1 -> r1.equals(r))
-                            .collect(Collectors.toList()));
-
-                }
-                rooms = collect;
-            }
-
+            rooms.removeIf(r -> r.getBookedDates().contains(date));
         }
 
         LOGGER.debug("Number of rooms that meet the conditions: " + rooms.size());
