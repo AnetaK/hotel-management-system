@@ -41,7 +41,7 @@ public class FindAvailableRooms {
 
         List<String> datesRange = new ArrayList<>();
 
-        for (int i = 0; i < daysBetween; i++) {
+        for (int i = 0; i < daysBetween + 1; i++) {
             String date = startDate.plusDays(i).toString();
 
             rooms.removeIf(r -> r.getBookedDates().contains(date));

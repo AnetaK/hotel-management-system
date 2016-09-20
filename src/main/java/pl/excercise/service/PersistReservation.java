@@ -25,7 +25,7 @@ public class PersistReservation {
     @PersistenceContext
     EntityManager em;
 
-    public void persist(GuestSessionScoped guest, ParametrizedRoom room, int id){
+    public void persist(GuestSessionScoped guest, ParametrizedRoom room, long id) {
 
         LocalDate startDate = LocalDate.parse(room.getAvailableFrom());
         LocalDate endDate = LocalDate.parse(room.getAvailableTo());
@@ -34,7 +34,7 @@ public class PersistReservation {
 
         List<String> bookedDates = new ArrayList<>();
 
-        for (int i = 0; i < daysBetween; i++) {
+        for (int i = 0; i < daysBetween + 1; i++) {
             String date = startDate.plusDays(i).toString();
             bookedDates.add(date);
         }
@@ -58,7 +58,20 @@ public class PersistReservation {
         em.persist(reservation);
 
         LOGGER.debug("Reservation persisted succesfully");
-// TODO: 20.09.16 dodaj wpis w datach - room entity
+
+        RoomEntity oldRoomEntity = em.find(RoomEntity.class, id);
+        List<String> extractedBookedDates = oldRoomEntity.getBookedDates();
+        LOGGER.trace("Booked dates size before update: " + extractedBookedDates.size());
+
+        extractedBookedDates.addAll(bookedDates);
+
+        em.createQuery("update RoomEntity re set re.bookedDates=:bookedDates where re.id=:id ")
+                .setParameter("id", id)
+                .setParameter("bookedDates", extractedBookedDates);
+
+        RoomEntity newRoomEntity = em.find(RoomEntity.class, id);
+        List<String> newExtractedBookedDates = newRoomEntity.getBookedDates();
+        LOGGER.trace("Booked dates size before update: " + newExtractedBookedDates.size());
 
     }
 

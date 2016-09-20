@@ -3,7 +3,6 @@ package pl.excercise.web;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pl.excercise.model.Guest;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
@@ -54,7 +53,7 @@ public class BookingServlet extends HttpServlet {
         String lastName = request.getParameter("lastName");
         LOGGER.trace("Data retrieved from post - firstName.length: {}, lastName.length: {}, roomArray.length: {} ",
                 firstName.length(), lastName.length(), roomArray.length);
-        int id = Integer.parseInt(roomArray[0]);
+        long id = Long.parseLong(roomArray[0]);
 
         guest.withFirstName(firstName)
                 .withLastName(lastName)
