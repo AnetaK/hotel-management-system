@@ -3,6 +3,7 @@ package pl.excercise.service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pl.excercise.model.Guest;
+import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
 import pl.excercise.model.room.RoomEntity;
@@ -24,7 +25,7 @@ public class PersistReservation {
     @PersistenceContext
     EntityManager em;
 
-    public Reservation persist(Guest guest, ParametrizedRoom room, int id){
+    public void persist(GuestSessionScoped guest, ParametrizedRoom room, int id){
 
         LocalDate startDate = LocalDate.parse(room.getAvailableFrom());
         LocalDate endDate = LocalDate.parse(room.getAvailableTo());
@@ -47,14 +48,18 @@ public class PersistReservation {
         roomEntity.setId(id);
 
         Reservation reservation = new Reservation()
-                .withGuest(guest)
-                .withRoom(roomEntity);
+                .withGuest(new Guest().withFirstName(guest.getFirstName()).withLastName(guest.getLastName()).build())
+                .withRoom(roomEntity)
+                .withBookedFrom(room.getAvailableFrom())
+                .withBookedTo(room.getAvailableTo());
+
+        System.out.println("reservation = " + reservation.toString());
 
         em.persist(reservation);
 
         LOGGER.debug("Reservation persisted succesfully");
+// TODO: 20.09.16 dodaj wpis w datach - room entity
 
-        return reservation;
     }
 
 

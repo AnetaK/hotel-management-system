@@ -1,10 +1,10 @@
 package pl.excercise.model;
 
-import javax.persistence.Embeddable;
+import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 
-@Embeddable
-public class Guest implements Serializable{
+@SessionScoped
+public class GuestSessionScoped implements Serializable{
 
     private String firstName;
     private String lastName;
@@ -17,26 +17,26 @@ public class Guest implements Serializable{
         return lastName;
     }
 
-    public Guest() {
+    public GuestSessionScoped() {
     }
 
-    public Guest(String firstName, String lastName) {
+    public GuestSessionScoped(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public Guest withFirstName(String firstName) {
+    public GuestSessionScoped withFirstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
 
-    public Guest withLastName(String lastName) {
+    public GuestSessionScoped withLastName(String lastName) {
         this.lastName = lastName;
         return this;
     }
 
-    public Guest build() {
-        return new Guest(firstName, lastName);
+    public GuestSessionScoped build() {
+        return new GuestSessionScoped(firstName, lastName);
     }
 
     @Override

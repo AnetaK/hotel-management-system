@@ -4,6 +4,7 @@ package pl.excercise.web;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pl.excercise.model.Guest;
+import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
 import pl.excercise.service.ExtractReservations;
@@ -21,12 +22,12 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet(urlPatterns = "/bookRoom")
-public class BookingServlet extends HttpServlet{
+public class BookingServlet extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(BookingServlet.class);
 
     @Inject
-    Guest guest;
+    GuestSessionScoped guest;
 
     @EJB
     PersistReservation persistReservation;
@@ -41,7 +42,7 @@ public class BookingServlet extends HttpServlet{
         String roomArray[] = request.getParameter("availableRooms").split(";");
         String availableFrom = request.getParameter("availableFrom");
         String availableTo = request.getParameter("availableTo");
-        LOGGER.trace("Reservation for period from: {} to: {}",availableFrom,availableTo);
+        LOGGER.trace("Reservation for period from: {} to: {}", availableFrom, availableTo);
         ParametrizedRoom room = new ParametrizedRoom()
                 .withRoomType(roomArray[1])
                 .withWindowsExposure(roomArray[2])
@@ -52,22 +53,22 @@ public class BookingServlet extends HttpServlet{
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         LOGGER.trace("Data retrieved from post - firstName.length: {}, lastName.length: {}, roomArray.length: {} ",
-                firstName.length(), lastName.length(),roomArray.length );
+                firstName.length(), lastName.length(), roomArray.length);
         int id = Integer.parseInt(roomArray[0]);
 
         guest.withFirstName(firstName)
                 .withLastName(lastName)
                 .build();
 
-        Reservation reservation = persistReservation.persist(guest, room, id);
+        persistReservation.persist(guest, room, id);
 
         LOGGER.debug("Room is booked");
 
-        List<Reservation> reservationList = extractReservations.extract();
+        List<Reservation> reservationList = extractReservations.extract(guest);
 
-        request.getSession().setAttribute("reservation",reservationList);
-        request.getSession().setAttribute("firstName",firstName);
-        request.getSession().setAttribute("lastName",lastName);
+        request.getSession().setAttribute("emptyList",reservationList.isEmpty());
+        request.getSession().setAttribute("reservation", reservationList);
+       // request.getSession().setAttribute("guest", guest);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("ViewReservations.jsp");
         dispatcher.forward(request, response);

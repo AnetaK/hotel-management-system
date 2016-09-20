@@ -29,7 +29,6 @@ public class AvailableRoomsForPeriodServlet extends HttpServlet{
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOGGER.trace("Available rooms viewing");
 
-
         String roomType = request.getParameter("roomType");
         String windowsExposure = request.getParameter("windowsExposure");
         String availableFrom = request.getParameter("availableFrom");

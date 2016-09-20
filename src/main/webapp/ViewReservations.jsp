@@ -28,37 +28,41 @@
 <div class="container lower forms-template">
     <h1>Hotel Management System HireMe</h1>
 
-    <h3>Hi ${firstName} ${lastName} <br> Find your reservations below</h3>
+
+
+
     <form method="POST" action="cancelReservation">
-        <div class="form-group row lower">
-
-            <div class="col-lg-6">
-                <select name="reservation" class="selectpicker show-tick form-control" data-live-search="true">
+        <c:choose>
+            <c:when test="${emptyList}">
+                You have no reservations
+            </c:when>
+            <c:otherwise>
+                <ul class="list-group button-middle ">
                     <c:forEach items="${reservation}" var="reservation">
-                        <option
-                                value="${reservation.id}">
-                            Room type: <c:out value="${reservation.room.roomType}"/>. Windows exposure: <c:out
-                                value="${reservation.room.windowsExposure}"/>. Booked for following days:
-                            <c:forEach items="${reservation.room.bookedDates}" var="list">
-                                ${list}
-                            </c:forEach>
-
-                            <c:choose>
-                                <c:when test="${reservation.cancelledFlag == '1'}">
-                                    Cancelled
-                                </c:when>
-                                <c:otherwise>
-                                    <button type="submit"
-                                            name="cancel">Cancel reservation
-                                    </button>
-                                </c:otherwise>
-                            </c:choose>
-                        </option>
+                        <div class="col-lg-12 ">
+                            <div class="row">
+                                <h3>Hi ${reservation.guest.firstName} ${reservation.guest.lastName}! </h3>
+                                <h4>See your reservations below:</h4>
+                                Room type: <c:out value="${reservation.room.roomType}"/>
+                                <br>Windows exposure: <c:out value="${reservation.room.windowsExposure}"/>
+                                <br> Booked from ${reservation.bookedFrom} to ${reservation.bookedTo}
+                                <br>
+                                <c:choose>
+                                    <c:when test="${reservation.cancelledFlag == '1'}">
+                                        Cancelled
+                                    </c:when>
+                                    <c:otherwise>
+                                        <button type="submit"
+                                                name="cancel">Cancel reservation
+                                        </button>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </div>
                     </c:forEach>
-                </select>
-            </div>
-        </div>
-
+                </ul>
+            </c:otherwise>
+        </c:choose>
     </form>
 
 </div>

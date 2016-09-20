@@ -18,6 +18,8 @@ public class Reservation {
     private RoomEntity room;
 
     int cancelledFlag = 0;
+    String bookedFrom;
+    String bookedTo;
 
     public Long getId() {
         return id;
@@ -35,13 +37,23 @@ public class Reservation {
         return cancelledFlag;
     }
 
+    public String getBookedFrom() {
+        return bookedFrom;
+    }
+
+    public String getBookedTo() {
+        return bookedTo;
+    }
+
     public Reservation() {
     }
 
-    public Reservation(Guest guest, RoomEntity room, int cancelledFlag) {
+    public Reservation(Guest guest, RoomEntity room, int cancelledFlag, String bookedFrom, String bookedTo) {
         this.guest = guest;
         this.room = room;
         this.cancelledFlag = cancelledFlag;
+        this.bookedFrom = bookedFrom;
+        this.bookedTo = bookedTo;
     }
 
     public Reservation withGuest(Guest guest) {
@@ -54,13 +66,23 @@ public class Reservation {
         return this;
     }
 
+    public Reservation withBookedFrom(String bookedFrom) {
+        this.bookedFrom = bookedFrom;
+        return this;
+    }
+
+    public Reservation withBookedTo(String bookedTo) {
+        this.bookedTo = bookedTo;
+        return this;
+    }
+
     public Reservation withCancelledFlag(int cancelledFlag) {
         this.cancelledFlag = cancelledFlag;
         return this;
     }
 
     public Reservation build() {
-        return new Reservation(guest, room, cancelledFlag);
+        return new Reservation(guest, room, cancelledFlag, bookedFrom, bookedTo);
     }
 
     @Override
@@ -70,6 +92,8 @@ public class Reservation {
                 ", guest=" + guest +
                 ", room=" + room +
                 ", cancelledFlag=" + cancelledFlag +
+                ", bookedFrom='" + bookedFrom + '\'' +
+                ", bookedTo='" + bookedTo + '\'' +
                 '}';
     }
 }
