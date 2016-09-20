@@ -29,26 +29,27 @@
     <h1>Hotel Management System HireMe</h1>
 
 
-
-
     <form method="POST" action="cancelReservation">
         <c:choose>
             <c:when test="${emptyList}">
                 You have no reservations
             </c:when>
             <c:otherwise>
-                <ul class="list-group button-middle ">
-                    <c:forEach items="${reservation}" var="reservation">
+                <h3>Hi ${guest.firstName} ${guest.lastName}! </h3>
+                <h4>See your reservations below:</h4>
+
+                <c:forEach items="${reservation}" var="reservation">
+                    <ul class="list-group button-middle ">
                         <div class="col-lg-12 ">
                             <div class="row">
-                                <h3>Hi ${reservation.guest.firstName} ${reservation.guest.lastName}! </h3>
-                                <h4>See your reservations below:</h4>
                                 Room type: <c:out value="${reservation.room.roomType}"/>
                                 <br>Windows exposure: <c:out value="${reservation.room.windowsExposure}"/>
                                 <br> Booked from ${reservation.bookedFrom} to ${reservation.bookedTo}
-                                <br>
+                                <input type="hidden" value="${reservation.id}" name="reservationId"/>
+                                <input type="hidden" value="${reservation.bookedFrom}" name="cancelFrom"/>
+                                <input type="hidden" value="${reservation.bookedTo}" name="cancelTo"/>
                                 <c:choose>
-                                    <c:when test="${reservation.cancelledFlag == '1'}">
+                                    <c:when test="${reservation.cancelledFlag}">
                                         Cancelled
                                     </c:when>
                                     <c:otherwise>
@@ -59,8 +60,9 @@
                                 </c:choose>
                             </div>
                         </div>
-                    </c:forEach>
-                </ul>
+                    </ul>
+                </c:forEach>
+
             </c:otherwise>
         </c:choose>
     </form>

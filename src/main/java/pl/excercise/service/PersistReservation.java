@@ -11,11 +11,7 @@ import pl.excercise.model.room.RoomEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-
-import static java.time.temporal.ChronoUnit.DAYS;
 
 @Stateless
 public class PersistReservation {
@@ -27,17 +23,8 @@ public class PersistReservation {
 
     public void persist(GuestSessionScoped guest, ParametrizedRoom room, long id) {
 
-        LocalDate startDate = LocalDate.parse(room.getAvailableFrom());
-        LocalDate endDate = LocalDate.parse(room.getAvailableTo());
-        long daysBetween = DAYS.between(startDate, endDate);
-        LOGGER.trace("NumberOfDays for calculation" + daysBetween);
-
-        List<String> bookedDates = new ArrayList<>();
-
-        for (int i = 0; i < daysBetween + 1; i++) {
-            String date = startDate.plusDays(i).toString();
-            bookedDates.add(date);
-        }
+DaysCount daysCount = new DaysCount();
+        List<String> bookedDates = daysCount.returnDaysList(room.getAvailableFrom(), room.getAvailableTo());
 
         RoomEntity roomEntity = new RoomEntity()
                 .withRoomType(room.getRoomType())
@@ -51,7 +38,9 @@ public class PersistReservation {
                 .withGuest(new Guest().withFirstName(guest.getFirstName()).withLastName(guest.getLastName()).build())
                 .withRoom(roomEntity)
                 .withBookedFrom(room.getAvailableFrom())
-                .withBookedTo(room.getAvailableTo());
+                .withBookedTo(room.getAvailableTo())
+                .withCancelledFlag(false)
+                .build();
 
         System.out.println("reservation = " + reservation.toString());
 
@@ -61,7 +50,7 @@ public class PersistReservation {
 
         RoomEntity oldRoomEntity = em.find(RoomEntity.class, id);
         List<String> extractedBookedDates = oldRoomEntity.getBookedDates();
-        LOGGER.trace("Booked dates size before update: " + extractedBookedDates.size());
+        LOGGER.trace("Booked dates number before update: " + extractedBookedDates.size());
 
         extractedBookedDates.addAll(bookedDates);
 
@@ -69,9 +58,7 @@ public class PersistReservation {
                 .setParameter("id", id)
                 .setParameter("bookedDates", extractedBookedDates);
 
-        RoomEntity newRoomEntity = em.find(RoomEntity.class, id);
-        List<String> newExtractedBookedDates = newRoomEntity.getBookedDates();
-        LOGGER.trace("Booked dates size before update: " + newExtractedBookedDates.size());
+        LOGGER.trace("Booked dates number after update: " + extractedBookedDates.size());
 
     }
 

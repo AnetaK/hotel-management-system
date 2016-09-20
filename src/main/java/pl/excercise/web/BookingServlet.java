@@ -51,6 +51,8 @@ public class BookingServlet extends HttpServlet {
 
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
+        // TODO: 20.09.16 dodaj walidację - pola firsName i lastName nie mogę być puste
+
         LOGGER.trace("Data retrieved from post - firstName.length: {}, lastName.length: {}, roomArray.length: {} ",
                 firstName.length(), lastName.length(), roomArray.length);
         long id = Long.parseLong(roomArray[0]);
@@ -67,7 +69,7 @@ public class BookingServlet extends HttpServlet {
 
         request.getSession().setAttribute("emptyList",reservationList.isEmpty());
         request.getSession().setAttribute("reservation", reservationList);
-       // request.getSession().setAttribute("guest", guest);
+        request.getSession().setAttribute("guest", guest);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("ViewReservations.jsp");
         dispatcher.forward(request, response);

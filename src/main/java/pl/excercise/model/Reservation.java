@@ -17,7 +17,7 @@ public class Reservation {
     @ManyToOne
     private RoomEntity room;
 
-    int cancelledFlag = 0;
+    boolean cancelledFlag;
     String bookedFrom;
     String bookedTo;
 
@@ -33,7 +33,7 @@ public class Reservation {
         return room;
     }
 
-    public int getCancelledFlag() {
+    public boolean getCancelledFlag() {
         return cancelledFlag;
     }
 
@@ -48,7 +48,7 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(Guest guest, RoomEntity room, int cancelledFlag, String bookedFrom, String bookedTo) {
+    public Reservation(Guest guest, RoomEntity room, boolean cancelledFlag, String bookedFrom, String bookedTo) {
         this.guest = guest;
         this.room = room;
         this.cancelledFlag = cancelledFlag;
@@ -76,7 +76,7 @@ public class Reservation {
         return this;
     }
 
-    public Reservation withCancelledFlag(int cancelledFlag) {
+    public Reservation withCancelledFlag(boolean cancelledFlag) {
         this.cancelledFlag = cancelledFlag;
         return this;
     }
