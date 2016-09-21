@@ -49,31 +49,41 @@ public class BookingServlet extends HttpServlet {
                 .withAvailableTo(availableTo)
                 .build();
 
+        long id = Long.parseLong(roomArray[0]);
+
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
-        // TODO: 20.09.16 dodaj walidację - pola firsName i lastName nie mogę być puste
-
-        LOGGER.trace("Data retrieved from post - firstName.length: {}, lastName.length: {}, roomArray.length: {} ",
-                firstName.length(), lastName.length(), roomArray.length);
-        long id = Long.parseLong(roomArray[0]);
 
         guest.withFirstName(firstName)
                 .withLastName(lastName)
                 .build();
 
-        persistReservation.persist(guest, room, id);
+        if (isValid(firstName,lastName)) {
+            persistReservation.persist(guest, room, id);
 
-        LOGGER.debug("Room is booked");
+            LOGGER.debug("Room is booked");
 
-        List<Reservation> reservationList = extractReservations.extract(guest);
+            List<Reservation> reservationList = extractReservations.extract(guest);
 
-        request.getSession().setAttribute("emptyList",reservationList.isEmpty());
-        request.getSession().setAttribute("reservation", reservationList);
-        request.getSession().setAttribute("guest", guest);
-
-        RequestDispatcher dispatcher = request.getRequestDispatcher("ViewReservations.jsp");
-        dispatcher.forward(request, response);
+            request.getSession().setAttribute("emptyList",reservationList.isEmpty());
+            request.getSession().setAttribute("reservation", reservationList);
+            request.getSession().setAttribute("guest", guest);
 
 
+            RequestDispatcher dispatcher = request.getRequestDispatcher("ViewReservations.jsp");
+            dispatcher.forward(request, response);
+
+        } else {
+
+            LOGGER.error("Wrong form data ");
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("Index.jsp");
+            dispatcher.forward(request, response);
+        }
+
+    }
+
+    private boolean isValid(String firstname, String lastname) {
+        return (!firstname.isEmpty() && !lastname.isEmpty());
     }
 }

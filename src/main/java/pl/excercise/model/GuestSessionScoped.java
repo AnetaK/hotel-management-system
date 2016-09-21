@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class GuestSessionScoped implements Serializable{
 
     private String firstName;
+
     private String lastName;
 
     public String getFirstName() {
@@ -46,5 +47,6 @@ public class GuestSessionScoped implements Serializable{
                 ", lastName='" + lastName + '\'' +
                 '}';
     }
+
 
 }

@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import pl.excercise.model.room.ParametrizedRoom;
 import pl.excercise.model.room.RoomEntity;
 import pl.excercise.service.FindAvailableRooms;
+import pl.excercise.service.ValidateDate;
 
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
@@ -34,24 +35,31 @@ public class AvailableRoomsServlet extends HttpServlet{
         String availableFrom = request.getParameter("availableFrom");
         String availableTo = request.getParameter("availableTo");
 
-//        TODO dodaj walidację daty - from nie może byc późniejsza niż to
+        ValidateDate validateDate = new ValidateDate();
 
-        ParametrizedRoom parametrizedRoom = new ParametrizedRoom()
-                .withRoomType(roomType)
-                .withWindowsExposure(windowsExposure)
-                .withAvailableFrom(availableFrom)
-                .withAvailableTo(availableTo)
-                .build();
+        if(validateDate.validate(availableFrom,availableTo)) {
+            ParametrizedRoom parametrizedRoom = new ParametrizedRoom()
+                    .withRoomType(roomType)
+                    .withWindowsExposure(windowsExposure)
+                    .withAvailableFrom(availableFrom)
+                    .withAvailableTo(availableTo)
+                    .build();
 
-        List<RoomEntity> availableRooms = findRooms.find(parametrizedRoom);
+            List<RoomEntity> availableRooms = findRooms.find(parametrizedRoom);
 
-        request.setAttribute("availableFrom",availableFrom);
-        request.setAttribute("availableTo",availableTo);
-        request.setAttribute("availableRooms",availableRooms);
+            request.setAttribute("availableFrom", availableFrom);
+            request.setAttribute("availableTo", availableTo);
+            request.setAttribute("availableRooms", availableRooms);
 
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("ViewRooms.jsp");
-        dispatcher.forward(request, response);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("ViewRooms.jsp");
+            dispatcher.forward(request, response);
+        }else{
+            LOGGER.error("Ending date should be before starting date");
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("Index.jsp");
+            dispatcher.forward(request, response);
+        }
 
     }
 
