@@ -28,11 +28,11 @@ public class ContactServlet extends HttpServlet {
 
         Location hotelLocation = cache.getHotelLocation();
 
-        request.setAttribute("hotelName",hotelLocation.getHotelName());
-        request.setAttribute("street",hotelLocation.getAddress().getStreet());
-        request.setAttribute("zipcode",hotelLocation.getAddress().getZipCode());
-        request.setAttribute("city",hotelLocation.getAddress().getCity());
-        request.setAttribute("location",hotelLocation);
+        request.setAttribute("hotelName", hotelLocation.getHotelName());
+        request.setAttribute("street", hotelLocation.getAddress().getStreet());
+        request.setAttribute("zipcode", hotelLocation.getAddress().getZipCode());
+        request.setAttribute("city", hotelLocation.getAddress().getCity());
+        request.setAttribute("location", hotelLocation);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("Contact.jsp");
         dispatcher.forward(request, response);

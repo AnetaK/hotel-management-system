@@ -20,8 +20,8 @@ public class RandomRoomsTest {
         LocalDate maxDate = LocalDate.now().plusDays(366);
         LocalDate date = LocalDate.parse(randomDates.get(0));
 
-        assertThat("Dates list is empty",randomDates.size(),is(not(0)));
-        assertThat("First generated date has wrong format",date.isBefore(maxDate),is(true));
+        assertThat("Dates list is empty", randomDates.size(), is(not(0)));
+        assertThat("First generated date has wrong format", date.isBefore(maxDate), is(true));
 
     }
 

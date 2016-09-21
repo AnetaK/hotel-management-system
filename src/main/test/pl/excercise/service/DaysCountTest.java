@@ -16,15 +16,15 @@ public class DaysCountTest {
     DaysCount daysCount = new DaysCount();
 
     @Test
-    public void should_return_3_days(){
+    public void should_return_3_days() {
 
         String startDate = "2016-09-20";
         String endDate = "2016-09-22";
 
-        List<String> bookedDates = daysCount.returnDaysList(startDate,endDate);
+        List<String> bookedDates = daysCount.returnDaysList(startDate, endDate);
 
         assertThat("Wrong number of days", bookedDates.size(), is(equalTo(3)));
-        assertTrue("Wrong content", bookedDates.containsAll(Arrays.asList("2016-09-20","2016-09-21","2016-09-22")));
+        assertTrue("Wrong content", bookedDates.containsAll(Arrays.asList("2016-09-20", "2016-09-21", "2016-09-22")));
 
     }
 

@@ -25,7 +25,7 @@ public class CancelReservation {
 
         Reservation reservation = em.find(Reservation.class, id);
 
-        LOGGER.trace("reservation.getCancelledFlag() = " + reservation.getCancelledFlag());
+        LOGGER.trace("Reservation cancelled flag = " + reservation.getCancelledFlag());
 
         RoomEntity roomEntity = reservation.getRoom();
 

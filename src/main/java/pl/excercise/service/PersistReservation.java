@@ -23,7 +23,7 @@ public class PersistReservation {
 
     public void persist(GuestSessionScoped guest, ParametrizedRoom room, long id) {
 
-DaysCount daysCount = new DaysCount();
+        DaysCount daysCount = new DaysCount();
         List<String> bookedDates = daysCount.returnDaysList(room.getAvailableFrom(), room.getAvailableTo());
 
         RoomEntity roomEntity = new RoomEntity()

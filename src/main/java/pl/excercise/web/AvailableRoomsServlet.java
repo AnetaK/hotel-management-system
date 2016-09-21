@@ -20,7 +20,7 @@ import java.util.List;
 
 
 @WebServlet(urlPatterns = "/availableRooms")
-public class AvailableRoomsServlet extends HttpServlet{
+public class AvailableRoomsServlet extends HttpServlet {
     private static final Logger LOGGER = LogManager.getLogger(AvailableRoomsServlet.class);
 
     @EJB
@@ -37,7 +37,7 @@ public class AvailableRoomsServlet extends HttpServlet{
 
         ValidateDate validateDate = new ValidateDate();
 
-        if(validateDate.validate(availableFrom,availableTo)) {
+        if (validateDate.validate(availableFrom, availableTo)) {
             ParametrizedRoom parametrizedRoom = new ParametrizedRoom()
                     .withRoomType(roomType)
                     .withWindowsExposure(windowsExposure)
@@ -54,7 +54,7 @@ public class AvailableRoomsServlet extends HttpServlet{
 
             RequestDispatcher dispatcher = request.getRequestDispatcher("ViewRooms.jsp");
             dispatcher.forward(request, response);
-        }else{
+        } else {
             LOGGER.error("Ending date should be before starting date");
 
             RequestDispatcher dispatcher = request.getRequestDispatcher("Index.jsp");

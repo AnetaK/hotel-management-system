@@ -9,7 +9,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -38,8 +37,6 @@ public class FindAvailableRooms {
         LocalDate endDate = LocalDate.parse(parametrizedRoom.getAvailableTo());
         long daysBetween = DAYS.between(startDate, endDate);
         LOGGER.trace("NumberOfDays for calculation" + daysBetween);
-
-        List<String> datesRange = new ArrayList<>();
 
         for (int i = 0; i < daysBetween + 1; i++) {
             String date = startDate.plusDays(i).toString();
