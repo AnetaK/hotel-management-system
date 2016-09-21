@@ -19,8 +19,8 @@ import java.util.List;
 
 
 @WebServlet(urlPatterns = "/availableRooms")
-public class AvailableRoomsForPeriodServlet extends HttpServlet{
-    private static final Logger LOGGER = LogManager.getLogger(AvailableRoomsForPeriodServlet.class);
+public class AvailableRoomsServlet extends HttpServlet{
+    private static final Logger LOGGER = LogManager.getLogger(AvailableRoomsServlet.class);
 
     @EJB
     FindAvailableRooms findRooms;

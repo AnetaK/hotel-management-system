@@ -23,11 +23,11 @@ public class HotelParamsCache {
     EntityManager em;
 
     Location hotelLocation = new Location()
-            .withHotelName("Hotel")
+            .withHotelName("HireMe Hotel")
             .withAddress(new Address()
-                    .withCity("City")
-                    .withStreet("Street")
-                    .withZipCode("00-000")
+                    .withCity("Gdańsk")
+                    .withStreet("al. Zwycięstwa 13A")
+                    .withZipCode("80-219")
                     .build())
             .build();
 

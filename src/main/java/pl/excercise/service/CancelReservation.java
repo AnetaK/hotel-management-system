@@ -19,8 +19,9 @@ public class CancelReservation {
 
     public void cancel(long id, List<String> datesToCancel) {
 
-        em.createQuery("update Reservation r set r.cancelledFlag = true where r.id=:id ")
-                .setParameter("id", id);
+        em.createQuery("update Reservation set cancelledFlag = true where id=:id ")
+                .setParameter("id", id)
+                .executeUpdate();
 
         Reservation reservation = em.find(Reservation.class, id);
 
@@ -35,12 +36,10 @@ public class CancelReservation {
         LOGGER.trace("Number of booked dates after cancelling: " + roomDates.size());
 
         em.createQuery("update RoomEntity re set re.bookedDates=:bookedDates where re.id=:id ")
-                .setParameter("id", roomEntity.getId())
+                .setParameter("id", id)
                 .setParameter("bookedDates", roomDates);
 
         LOGGER.trace("Reservation {} is cancelled", id);
-
-        LOGGER.trace("room dates aftes cancelling reservation" + em.find(RoomEntity.class, roomEntity.getId()));
 
     }
 }

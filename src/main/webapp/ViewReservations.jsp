@@ -37,32 +37,30 @@
             <c:otherwise>
                 <h3>Hi ${guest.firstName} ${guest.lastName}! </h3>
                 <h4>See your reservations below:</h4>
+                <ul class="list-group button-middle ">
+                    <c:forEach items="${reservation}" var="reservation">
 
-                <c:forEach items="${reservation}" var="reservation">
-                    <ul class="list-group button-middle ">
                         <div class="col-lg-12 ">
                             <div class="row">
                                 Room type: <c:out value="${reservation.room.roomType}"/>
                                 <br>Windows exposure: <c:out value="${reservation.room.windowsExposure}"/>
-                                <br> Booked from ${reservation.bookedFrom} to ${reservation.bookedTo}
-                                <input type="hidden" value="${reservation.id}" name="reservationId"/>
-                                <input type="hidden" value="${reservation.bookedFrom}" name="cancelFrom"/>
-                                <input type="hidden" value="${reservation.bookedTo}" name="cancelTo"/>
+                                <br> Booked from <c:out value="${reservation.bookedFrom} to ${reservation.bookedTo}"/>
+                                <br> Room number <c:out value="${reservation.room.id}"/>
                                 <c:choose>
                                     <c:when test="${reservation.cancelledFlag}">
                                         Cancelled
                                     </c:when>
                                     <c:otherwise>
-                                        <button type="submit"
+                                        <button type="submit" value="${reservation.id};${reservation.bookedFrom};${reservation.bookedTo}"
                                                 name="cancel">Cancel reservation
                                         </button>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
                         </div>
-                    </ul>
-                </c:forEach>
-
+                        <br><br>
+                    </c:forEach>
+                </ul>
             </c:otherwise>
         </c:choose>
     </form>

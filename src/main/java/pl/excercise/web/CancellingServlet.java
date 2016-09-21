@@ -39,14 +39,14 @@ public class CancellingServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOGGER.debug("Canceling room reservation...");
 
-        String cancelFrom = request.getParameter("cancelFrom");
-        String cancelTo = request.getParameter("cancelTo");
-
+        String[] cancel = request.getParameter("cancel").split(";");
+        long reservationId = Long.parseLong(cancel[0]);
+        String cancelFrom = cancel[1];
+        String cancelTo = cancel[2];
 
         DaysCount daysCount = new DaysCount();
         List<String> datesToCancel = daysCount.returnDaysList(cancelFrom, cancelTo);
 
-        long reservationId = Long.parseLong(request.getParameter("reservationId"));
         cancelReservation.cancel(reservationId,datesToCancel);
 
         List<Reservation> reservationList = extractReservations.extract(guest);

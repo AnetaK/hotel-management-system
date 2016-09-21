@@ -38,7 +38,8 @@
                         <option
                                 value="${availableRooms.id};${availableRooms.roomType};${availableRooms.windowsExposure}">
                             Room type: <c:out value="${availableRooms.roomType}"/>. Windows exposure: <c:out
-                                value="${availableRooms.windowsExposure}"/></option>
+                                value="${availableRooms.windowsExposure}"/>. Room number: <c:out value="${availableRooms.id}"/>
+                        </option>
                     </c:forEach>
                 </select>
             </div>
