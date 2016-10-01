@@ -6,8 +6,8 @@ import org.apache.logging.log4j.Logger;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
-import pl.excercise.service.ExtractReservations;
-import pl.excercise.service.PersistReservation;
+import pl.excercise.service.RoomService;
+import pl.excercise.service.Validate;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -29,10 +29,10 @@ public class BookingServlet extends HttpServlet {
     GuestSessionScoped guest;
 
     @EJB
-    PersistReservation persistReservation;
+    RoomService roomService;
 
     @EJB
-    ExtractReservations extractReservations;
+    Validate validate;
 
 
     @Override
@@ -58,12 +58,12 @@ public class BookingServlet extends HttpServlet {
                 .withLastName(lastName)
                 .build();
 
-        if (isValid(firstName,lastName)) {
-            persistReservation.persist(guest, room, id);
+        if (validate.validateNameContent(firstName,lastName)) {
+            roomService.persist(guest, room, id);
 
             LOGGER.debug("Room is booked");
 
-            List<Reservation> reservationList = extractReservations.extract(guest);
+            List<Reservation> reservationList = roomService.extract(guest);
 
             request.getSession().setAttribute("emptyList",reservationList.isEmpty());
             request.getSession().setAttribute("reservation", reservationList);
@@ -83,7 +83,5 @@ public class BookingServlet extends HttpServlet {
 
     }
 
-    private boolean isValid(String firstname, String lastname) {
-        return (!firstname.isEmpty() && !lastname.isEmpty());
-    }
+
 }

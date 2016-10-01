@@ -5,8 +5,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pl.excercise.model.room.ParametrizedRoom;
 import pl.excercise.model.room.RoomEntity;
-import pl.excercise.service.FindAvailableRooms;
-import pl.excercise.service.ValidateDate;
+import pl.excercise.service.RoomService;
+import pl.excercise.service.Validate;
 
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
@@ -24,7 +24,10 @@ public class AvailableRoomsServlet extends HttpServlet {
     private static final Logger LOGGER = LogManager.getLogger(AvailableRoomsServlet.class);
 
     @EJB
-    FindAvailableRooms findRooms;
+    RoomService roomService;
+
+    @EJB
+    Validate validate;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -35,9 +38,7 @@ public class AvailableRoomsServlet extends HttpServlet {
         String availableFrom = request.getParameter("availableFrom");
         String availableTo = request.getParameter("availableTo");
 
-        ValidateDate validateDate = new ValidateDate();
-
-        if (validateDate.validate(availableFrom, availableTo)) {
+        if (validate.validateDate(availableFrom, availableTo)) {
             ParametrizedRoom parametrizedRoom = new ParametrizedRoom()
                     .withRoomType(roomType)
                     .withWindowsExposure(windowsExposure)
@@ -45,7 +46,7 @@ public class AvailableRoomsServlet extends HttpServlet {
                     .withAvailableTo(availableTo)
                     .build();
 
-            List<RoomEntity> availableRooms = findRooms.find(parametrizedRoom);
+            List<RoomEntity> availableRooms = roomService.findAvailableRooms(parametrizedRoom);
 
             request.setAttribute("availableFrom", availableFrom);
             request.setAttribute("availableTo", availableTo);

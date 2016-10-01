@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import pl.excercise.model.room.RoomEntity;
 import pl.excercise.model.room.RoomType;
 import pl.excercise.model.room.WindowsExposure;
-import pl.excercise.service.FindAllRooms;
+import pl.excercise.service.RoomService;
 
 import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
@@ -28,7 +28,7 @@ public class SelectRoomParams extends HttpServlet {
     private static final Logger LOGGER = LogManager.getLogger(HotelParamsCache.class);
 
     @EJB
-    FindAllRooms find;
+    RoomService roomService;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -44,7 +44,7 @@ public class SelectRoomParams extends HttpServlet {
         request.setAttribute("windowsExposure", Arrays.asList(WindowsExposure.NORTH, WindowsExposure.WEST, WindowsExposure.SOUTH, WindowsExposure.EAST));
         request.setAttribute("calendar", dates);
 
-        List<RoomEntity> allRooms = find.findAllRooms();
+        List<RoomEntity> allRooms = roomService.findAllRooms();
 
         Comparator<RoomEntity> comparator = Comparator.comparing(roomEntity -> roomEntity.getRoomType());
         comparator = comparator.thenComparing(Comparator.comparing(roomEntity -> roomEntity.getWindowsExposure()));
