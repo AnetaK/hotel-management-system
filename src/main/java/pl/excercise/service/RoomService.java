@@ -84,13 +84,14 @@ public class RoomService {
 
         em.createQuery("update RoomEntity re set re.bookedDates=:bookedDates where re.id=:id ")
                 .setParameter("id", id)
-                .setParameter("bookedDates", roomDates);
+                .setParameter("bookedDates", roomDates)
+                .executeUpdate();
 
         LOGGER.trace("Reservation {} is cancelled", id);
 
     }
 
-    public void persist(GuestSessionScoped guest, ParametrizedRoom room, long id) {
+    public boolean persist(GuestSessionScoped guest, ParametrizedRoom room, long id) {
 
         DaysCount daysCount = new DaysCount();
         List<String> bookedDates = daysCount.returnDaysList(room.getAvailableFrom(), room.getAvailableTo());
@@ -128,6 +129,8 @@ public class RoomService {
                 .setParameter("bookedDates", extractedBookedDates);
 
         LOGGER.trace("Booked dates number after update: " + extractedBookedDates.size());
+
+        return true;
 
     }
 
