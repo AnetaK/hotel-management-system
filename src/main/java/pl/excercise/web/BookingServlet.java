@@ -59,11 +59,11 @@ public class BookingServlet extends HttpServlet {
                 .build();
 
         if (validate.validateNameContent(firstName,lastName)) {
-            roomService.persist(guest, room, id);
+            roomService.bookRoom(guest, room, id);
 
             LOGGER.debug("Room is booked");
 
-            List<Reservation> reservationList = roomService.extract(guest);
+            List<Reservation> reservationList = roomService.extractReservationsForGuest(guest);
 
             request.getSession().setAttribute("emptyList",reservationList.isEmpty());
             request.getSession().setAttribute("reservation", reservationList);

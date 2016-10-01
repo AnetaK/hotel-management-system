@@ -7,16 +7,15 @@ import pl.excercise.model.Guest;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
+import pl.excercise.model.room.RoomDTO;
 import pl.excercise.model.room.RoomEntity;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static java.time.temporal.ChronoUnit.DAYS;
 
 @Stateless
 public class RoomService {
@@ -26,28 +25,41 @@ public class RoomService {
     @PersistenceContext
     EntityManager em;
 
+    public List<RoomEntity> findAllRooms() {
+        List<RoomEntity> rooms = em.createQuery("select r from RoomEntity r ")
+                .getResultList();
+
+        LOGGER.debug("Result list size = " + rooms.size());
+        return rooms;
+    }
+
+
     public List<RoomEntity> findAvailableRooms(ParametrizedRoom parametrizedRoom) {
         LOGGER.trace("Searching in DB rooms for parameters" + parametrizedRoom.toString());
 
-        List<RoomEntity> rooms = em.createQuery("select r from RoomEntity r " +
-                "where r.roomType=:roomType " +
-                "and r.windowsExposure=:windowsExposure ")
+        DaysCount daysCount = new DaysCount();
+        List<String> datesRange = daysCount.returnDaysList(parametrizedRoom.getAvailableFrom(), parametrizedRoom.getAvailableTo());
+
+        List<RoomEntity> rooms = new ArrayList<>();
+
+
+        List<RoomEntity> resultList = em.createNativeQuery(" select distinct r.id, r.roomType, r.windowsExposure, b.bookedDates " +
+                "from RoomEntity_bookedDates b, RoomEntity r " +
+                "where (b.bookedDates not in :datesRange) " +
+                "and r.id = b.RoomEntity_id " +
+                "and r.roomType = :roomType " +
+                "and r.windowsExposure = :windowsExposure " +
+                "group by r.id, b.bookedDates",RoomEntity.class)
                 .setParameter("roomType", parametrizedRoom.getRoomType())
                 .setParameter("windowsExposure", parametrizedRoom.getWindowsExposure())
+                .setParameter("datesRange",datesRange)
                 .getResultList();
 
-        LOGGER.debug("Number of rooms that meet the type and exposure conditions: " + rooms.size());
+        //// TODO: 01.10.16 select distinct zwraca duplikaty - left join?
+        // TODO: 01.10.16 wyniki bez zainicjalizowanych dat nie są zwracane
 
-        LocalDate startDate = LocalDate.parse(parametrizedRoom.getAvailableFrom());
-        LocalDate endDate = LocalDate.parse(parametrizedRoom.getAvailableTo());
-        long daysBetween = DAYS.between(startDate, endDate);
-        LOGGER.trace("NumberOfDays for calculation" + daysBetween);
+        System.out.println("resultList.toString() = " + resultList.toString());
 
-        for (int i = 0; i < daysBetween + 1; i++) {
-            String date = startDate.plusDays(i).toString();
-
-            rooms.removeIf(r -> r.getBookedDates().contains(date));
-        }
 
         LOGGER.debug("Number of rooms that meet the conditions: " + rooms.size());
         LOGGER.trace("Found rooms: " + rooms.toString());
@@ -55,16 +67,7 @@ public class RoomService {
         return rooms;
     }
 
-    public List<RoomEntity> findAllRooms() {
-        List<RoomEntity> rooms = em.createQuery("select r from RoomEntity r ")
-                .getResultList();
-
-        LOGGER.debug("Result list size = " + rooms.size());
-
-        return rooms;
-    }
-
-    public void cancel(long id, List<String> datesToCancel) {
+    public void cancelReservation(long id, List<String> datesToCancel) {
 
         em.createQuery("update Reservation set cancelledFlag = true where id=:id ")
                 .setParameter("id", id)
@@ -82,16 +85,13 @@ public class RoomService {
         roomDates.removeIf(r -> datesToCancel.contains(r));
         LOGGER.trace("Number of booked dates after cancelling: " + roomDates.size());
 
-        em.createQuery("update RoomEntity re set re.bookedDates=:bookedDates where re.id=:id ")
-                .setParameter("id", id)
-                .setParameter("bookedDates", roomDates)
-                .executeUpdate();
+        updateBookedDates(roomEntity.getId(), roomDates);
 
         LOGGER.trace("Reservation {} is cancelled", id);
 
     }
 
-    public boolean persist(GuestSessionScoped guest, ParametrizedRoom room, long id) {
+    public void bookRoom(GuestSessionScoped guest, ParametrizedRoom room, long id) {
 
         DaysCount daysCount = new DaysCount();
         List<String> bookedDates = daysCount.returnDaysList(room.getAvailableFrom(), room.getAvailableTo());
@@ -119,22 +119,19 @@ public class RoomService {
         LOGGER.debug("Reservation persisted succesfully");
 
         RoomEntity oldRoomEntity = em.find(RoomEntity.class, id);
+
         List<String> extractedBookedDates = oldRoomEntity.getBookedDates();
         LOGGER.trace("Booked dates number before update: " + extractedBookedDates.size());
 
         extractedBookedDates.addAll(bookedDates);
 
-        em.createQuery("update RoomEntity re set re.bookedDates=:bookedDates where re.id=:id ")
-                .setParameter("id", id)
-                .setParameter("bookedDates", extractedBookedDates);
+        updateBookedDates(id, extractedBookedDates);
 
         LOGGER.trace("Booked dates number after update: " + extractedBookedDates.size());
 
-        return true;
-
     }
 
-    public List<Reservation> extract(GuestSessionScoped guest) {
+    public List<Reservation> extractReservationsForGuest(GuestSessionScoped guest) {
         List<Reservation> resultList = em.createQuery("select r from Reservation r " +
                 "where r.guest.firstName=:firstName and r.guest.lastName=:lastName ")
                 .setParameter("firstName", guest.getFirstName())
@@ -148,5 +145,13 @@ public class RoomService {
             return Collections.EMPTY_LIST;
         }
         return resultList;
+    }
+
+    private void updateBookedDates(long id, List<String> bookedDates) {
+        em.createNativeQuery("delete from RoomEntity_bookedDates where  RoomEntity_id=:id ").setParameter("id", id).executeUpdate();
+        em.createNativeQuery("insert into RoomEntity_bookedDates (RoomEntity_id, bookedDates) values (:id, :bookedDates) ")
+                .setParameter("id", id)
+                .setParameter("bookedDates", bookedDates)
+                .executeUpdate();
     }
 }

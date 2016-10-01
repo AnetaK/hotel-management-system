@@ -30,11 +30,11 @@ public class RoomServiceTest {
 //        ParametrizedRoom parametrizedRoom = new ParametrizedRoom().withAvailableFrom("2016-06-15");
 //
 //        //when
-//        boolean persist = roomService.persist(new GuestSessionScoped(), parametrizedRoom, 0);
-//        System.out.println("persist = " + persist);
+//        boolean bookRoom = roomService.bookRoom(new GuestSessionScoped(), parametrizedRoom, 0);
+//        System.out.println("bookRoom = " + bookRoom);
 //
 //        //then
-//        verify(persist)  ;
+//        verify(bookRoom)  ;
 
 //        SearchEventEntity entity = new SearchEventEntity();
 //        entity.setEvent(new SearchEvent());

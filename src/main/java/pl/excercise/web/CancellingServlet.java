@@ -43,9 +43,9 @@ public class CancellingServlet extends HttpServlet {
         DaysCount daysCount = new DaysCount();
         List<String> datesToCancel = daysCount.returnDaysList(cancelFrom, cancelTo);
 
-        roomService.cancel(reservationId,datesToCancel);
+        roomService.cancelReservation(reservationId,datesToCancel);
 
-        List<Reservation> reservationList = roomService.extract(guest);
+        List<Reservation> reservationList = roomService.extractReservationsForGuest(guest);
 
         request.getSession().setAttribute("emptyList",reservationList.isEmpty());
         request.getSession().setAttribute("reservation", reservationList);
