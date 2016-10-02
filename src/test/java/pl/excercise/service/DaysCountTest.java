@@ -2,14 +2,14 @@ package pl.excercise.service;
 
 
 import org.junit.Test;
+import pl.excercise.model.room.ReservationDate;
 
-import java.util.Arrays;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class DaysCountTest {
 
@@ -21,10 +21,13 @@ public class DaysCountTest {
         String startDate = "2016-09-20";
         String endDate = "2016-09-22";
 
-        List<String> bookedDates = daysCount.returnDaysList(startDate, endDate);
+        List<ReservationDate> bookedDates = daysCount.returnDaysList(startDate, endDate);
 
         assertThat("Wrong number of days", bookedDates.size(), is(equalTo(3)));
-        assertTrue("Wrong content", bookedDates.containsAll(Arrays.asList("2016-09-20", "2016-09-21", "2016-09-22")));
+        assertThat("Wrong first date ", bookedDates.get(0).getReservationDate(), is(equalTo(LocalDate.parse("2016-09-20"))));
+        assertThat("Wrong second date ", bookedDates.get(1).getReservationDate(), is(equalTo(LocalDate.parse("2016-09-21"))));
+        assertThat("Wrong third date", bookedDates.get(2).getReservationDate(), is(equalTo(LocalDate.parse("2016-09-22"))));
+
 
     }
 

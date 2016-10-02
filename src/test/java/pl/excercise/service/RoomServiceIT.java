@@ -8,10 +8,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import pl.excercise.model.room.ParametrizedRoom;
-import pl.excercise.model.room.RoomEntity;
-import pl.excercise.model.room.RoomType;
-import pl.excercise.model.room.WindowsExposure;
+import pl.excercise.model.room.*;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -73,13 +70,13 @@ public class RoomServiceIT {
             try {
                 utx.begin();
                 em.joinTransaction();
-                List<String> dates = new ArrayList<>();
-                dates.add(
-                        LocalDate.parse("2016-05-10").plusDays(i).toString()
-                );
-                dates.add(
-                        LocalDate.parse("2016-05-10").plusDays(i+1).toString()
-                );
+                List<ReservationDate> dates = new ArrayList<>();
+                ReservationDate reservationDate = new ReservationDate();
+                reservationDate.setReservationDate(LocalDate.parse("2016-05-10").plusDays(i));
+                ReservationDate reservationDate2 = new ReservationDate();
+                reservationDate.setReservationDate(LocalDate.parse("2016-05-10").plusDays(i+2));
+                dates.add(reservationDate);
+                dates.add(reservationDate2);
 
                 RoomEntity room = new RoomEntity();
                 room.withRoomType(RoomType.ExclusiveRoom.toString())

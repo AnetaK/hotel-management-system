@@ -2,6 +2,7 @@ package pl.excercise.web;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pl.excercise.model.room.ReservationDate;
 import pl.excercise.model.room.RoomEntity;
 import pl.excercise.service.RandomRooms;
 
@@ -46,9 +47,11 @@ public class RoomsListCache {
 
             roomsList.add(room);
         }
-        List<String> dates = new ArrayList<>();
+        List<ReservationDate> dates = new ArrayList<>();
         LocalDate now = LocalDate.now();
-        dates.add(now.minusDays(1).toString()); // passed date to initialise RoomEntity_bookedDates
+        ReservationDate reservationDate = new ReservationDate();
+        reservationDate.setReservationDate(now.minusDays(1));
+        dates.add(reservationDate); // passed date to initialise RoomEntity_bookedDates
 
         for (int i = 0; i < ROOMS_COUNT; i++) {
             RoomEntity room = new RoomEntity();
@@ -65,10 +68,5 @@ public class RoomsListCache {
         LOGGER.debug("{} random rooms persisted to DB", roomsList.size());
 
     }
-
-    public List<RoomEntity> getInitializedRooms() {
-        return roomsList;
-    }
-
 
 }

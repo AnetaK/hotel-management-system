@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
+import pl.excercise.model.room.ReservationDate;
 import pl.excercise.service.DaysCount;
 import pl.excercise.service.ReservarionService;
 
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet(urlPatterns = "/cancelReservation")
@@ -41,7 +43,7 @@ public class CancellingServlet extends HttpServlet {
         String cancelTo = cancel[2];
 
         DaysCount daysCount = new DaysCount();
-        List<String> datesToCancel = daysCount.returnDaysList(cancelFrom, cancelTo);
+        List<ReservationDate> datesToCancel = daysCount.returnDaysList(cancelFrom, cancelTo);
 
         reservationService.cancelReservation(reservationId,datesToCancel);
 

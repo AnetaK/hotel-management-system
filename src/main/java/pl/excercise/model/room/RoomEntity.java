@@ -14,8 +14,10 @@ public class RoomEntity implements Serializable {
 
     private String roomType;
 
-    @ElementCollection
-    private List<String> bookedDates;
+
+    @OneToMany(mappedBy="roomEntity")
+    private List<ReservationDate> bookedDates;
+
 
     private String windowsExposure;
 
@@ -23,7 +25,7 @@ public class RoomEntity implements Serializable {
         return roomType;
     }
 
-    public List<String> getBookedDates() {
+    public List<ReservationDate> getBookedDates() {
         return bookedDates;
     }
 
@@ -43,7 +45,7 @@ public class RoomEntity implements Serializable {
     }
 
 
-    public RoomEntity(String roomType, List<String> bookedDates, String windowsExposure) {
+    public RoomEntity(String roomType, List<ReservationDate> bookedDates, String windowsExposure) {
         this.roomType = roomType;
         this.bookedDates = bookedDates;
         this.windowsExposure = windowsExposure;
@@ -54,7 +56,7 @@ public class RoomEntity implements Serializable {
         return this;
     }
 
-    public RoomEntity withBookedDates(List<String> bookedDates) {
+    public RoomEntity withBookedDates(List<ReservationDate> bookedDates) {
         this.bookedDates = bookedDates;
         return this;
     }

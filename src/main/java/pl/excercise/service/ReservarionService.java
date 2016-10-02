@@ -7,11 +7,13 @@ import pl.excercise.model.Guest;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
+import pl.excercise.model.room.ReservationDate;
 import pl.excercise.model.room.RoomEntity;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +41,7 @@ public class ReservarionService {
         return resultList;
     }
 
-    public void cancelReservation(long id, List<String> datesToCancel) {
+    public void cancelReservation(long id, List<ReservationDate> datesToCancel) {
 
         em.createQuery("update Reservation set cancelledFlag = true where id=:id ")
                 .setParameter("id", id)
@@ -51,7 +53,7 @@ public class ReservarionService {
 
         RoomEntity roomEntity = reservation.getRoom();
 
-        List<String> roomDates = roomEntity.getBookedDates();
+        List<ReservationDate> roomDates = roomEntity.getBookedDates();
         LOGGER.trace("Number of booked dates before cancelling: " + roomDates.size());
 
         roomDates.removeIf(r -> datesToCancel.contains(r));
@@ -66,7 +68,7 @@ public class ReservarionService {
     public void createReservation(GuestSessionScoped guest, ParametrizedRoom room, long id) {
 
         DaysCount daysCount = new DaysCount();
-        List<String> bookedDates = daysCount.returnDaysList(room.getAvailableFrom(), room.getAvailableTo());
+        List<ReservationDate> bookedDates = daysCount.returnDaysList(room.getAvailableFrom(), room.getAvailableTo());
 
         RoomEntity roomEntity = new RoomEntity()
                 .withRoomType(room.getRoomType())
@@ -92,7 +94,7 @@ public class ReservarionService {
 
         RoomEntity oldRoomEntity = em.find(RoomEntity.class, id);
 
-        List<String> extractedBookedDates = oldRoomEntity.getBookedDates();
+        List<ReservationDate> extractedBookedDates = oldRoomEntity.getBookedDates();
         LOGGER.trace("Booked dates number before update: " + extractedBookedDates.size());
 
         extractedBookedDates.addAll(bookedDates);
@@ -103,7 +105,7 @@ public class ReservarionService {
 
     }
 
-    private void updateBookedDates(long id, List<String> bookedDates) {
+    private void updateBookedDates(long id, List<ReservationDate> bookedDates) {
         em.createNativeQuery("delete from RoomEntity_bookedDates where  RoomEntity_id=:id ").setParameter("id", id).executeUpdate();
         em.createNativeQuery("insert into RoomEntity_bookedDates (RoomEntity_id, bookedDates) values (:id, :bookedDates) ")
                 .setParameter("id", id)

@@ -1,6 +1,7 @@
 package pl.excercise.service;
 
 import org.junit.Test;
+import pl.excercise.model.room.ReservationDate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,9 +17,9 @@ public class RandomRoomsTest {
     @Test
     public void should_return_dates_before_a_year_from_now() throws Exception {
 
-        List<String> randomDates = randomRooms.getRandomDates();
+        List<ReservationDate> randomDates = randomRooms.getRandomDates();
         LocalDate maxDate = LocalDate.now().plusDays(366);
-        LocalDate date = LocalDate.parse(randomDates.get(0));
+        LocalDate date = randomDates.get(0).getReservationDate();
 
         assertThat("Dates list is empty", randomDates.size(), is(not(0)));
         assertThat("First generated date has wrong format", date.isBefore(maxDate), is(true));

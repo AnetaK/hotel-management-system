@@ -1,6 +1,7 @@
 package pl.excercise.service;
 
 
+import pl.excercise.model.room.ReservationDate;
 import pl.excercise.model.room.RoomType;
 import pl.excercise.model.room.WindowsExposure;
 
@@ -11,14 +12,16 @@ import java.util.*;
 @Stateless
 public class RandomRooms {
 
-    public List<String> getRandomDates() {
-        List<String> localDates = new ArrayList<>();
+    public List<ReservationDate> getRandomDates() {
+        List<ReservationDate> localDates = new ArrayList<>();
         LocalDate now = LocalDate.now();
         Random rand = new Random();
 
         for (int i = 0; i < 5; i++) {
             LocalDate date = now.plusDays(rand.nextInt(365));
-            localDates.add(date.toString());
+            ReservationDate reservationDate = new ReservationDate();
+            reservationDate.setReservationDate(date);
+            localDates.add(reservationDate);
         }
 
         return localDates;
