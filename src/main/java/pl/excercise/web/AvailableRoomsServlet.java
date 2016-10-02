@@ -26,9 +26,6 @@ public class AvailableRoomsServlet extends HttpServlet {
     @EJB
     RoomService roomService;
 
-    @EJB
-    Validate validate;
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOGGER.trace("Available rooms viewing");
@@ -38,6 +35,7 @@ public class AvailableRoomsServlet extends HttpServlet {
         String availableFrom = request.getParameter("availableFrom");
         String availableTo = request.getParameter("availableTo");
 
+        Validate validate = new Validate();
         if (validate.validateDate(availableFrom, availableTo)) {
             ParametrizedRoom parametrizedRoom = new ParametrizedRoom()
                     .withRoomType(roomType)

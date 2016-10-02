@@ -2,10 +2,11 @@ package pl.excercise.model.room;
 
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
-public class RoomEntity {
+public class RoomEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

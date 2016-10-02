@@ -1,9 +1,7 @@
 package pl.excercise.service;
 
-import javax.ejb.Stateless;
 import java.time.LocalDate;
 
-@Stateless
 public class Validate {
     public boolean validateDate(String stringStartDate, String stringEndDate) {
 

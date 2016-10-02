@@ -1,9 +1,6 @@
 package pl.excercise.service;
 
-
 import org.junit.Test;
-
-import javax.ejb.EJB;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
@@ -11,8 +8,7 @@ import static org.junit.Assert.assertThat;
 
 public class ValidateTest {
 
-    @EJB
-    Validate validate;
+    Validate validate = new Validate();
 
     @Test
     public void should_return_true() {

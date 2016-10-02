@@ -31,10 +31,6 @@ public class BookingServlet extends HttpServlet {
     @EJB
     ReservarionService reservarionService;
 
-    @EJB
-    Validate validate;
-
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LOGGER.debug("Creating room reservation...");
@@ -58,6 +54,7 @@ public class BookingServlet extends HttpServlet {
                 .withLastName(lastName)
                 .build();
 
+        Validate validate = new Validate();
         if (validate.validateNameContent(firstName,lastName)) {
             reservarionService.createReservation(guest, room, id);
 

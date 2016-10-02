@@ -4,16 +4,15 @@ package pl.excercise.service;
 import pl.excercise.model.room.RoomType;
 import pl.excercise.model.room.WindowsExposure;
 
+import javax.ejb.Stateless;
 import java.time.LocalDate;
 import java.util.*;
 
+@Stateless
 public class RandomRooms {
 
-    private List<RoomType> roomTypes = new ArrayList<RoomType>(Arrays.asList(RoomType.values()));
-    private List<WindowsExposure> windowsExposures = new ArrayList<WindowsExposure>(Arrays.asList(WindowsExposure.values()));
-    private List<String> localDates = new ArrayList<>();
-
     public List<String> getRandomDates() {
+        List<String> localDates = new ArrayList<>();
         LocalDate now = LocalDate.now();
         Random rand = new Random();
 
@@ -26,6 +25,8 @@ public class RandomRooms {
     }
 
     public String getRandomType() {
+        List<RoomType> roomTypes = new ArrayList<RoomType>(Arrays.asList(RoomType.values()));
+
 
         int index = Integer.MAX_VALUE;
         if (index >= roomTypes.size()) {
@@ -36,6 +37,7 @@ public class RandomRooms {
     }
 
     public String getRandomExposure() {
+        List<WindowsExposure> windowsExposures = new ArrayList<WindowsExposure>(Arrays.asList(WindowsExposure.values()));
 
         int index = Integer.MAX_VALUE;
         if (index >= windowsExposures.size()) {
@@ -45,12 +47,4 @@ public class RandomRooms {
         return windowsExposures.get(index++).toString();
     }
 
-    @Override
-    public String toString() {
-        return "RandomRooms{" +
-                "roomTypes=" + roomTypes +
-                ", windowsExposures=" + windowsExposures +
-                ", localDates=" + localDates +
-                '}';
-    }
 }
