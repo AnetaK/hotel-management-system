@@ -7,7 +7,6 @@ import pl.excercise.model.Guest;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
-import pl.excercise.model.room.RoomDTO;
 import pl.excercise.model.room.RoomEntity;
 
 import javax.ejb.Stateless;
@@ -40,26 +39,20 @@ public class RoomService {
         DaysCount daysCount = new DaysCount();
         List<String> datesRange = daysCount.returnDaysList(parametrizedRoom.getAvailableFrom(), parametrizedRoom.getAvailableTo());
 
-        List<RoomEntity> rooms = new ArrayList<>();
+        System.out.println("datesRange = " + datesRange.toString());
 
-
-        List<RoomEntity> resultList = em.createNativeQuery(" select distinct r.id, r.roomType, r.windowsExposure, b.bookedDates " +
-                "from RoomEntity_bookedDates b, RoomEntity r " +
-                "where (b.bookedDates not in :datesRange) " +
+        List<RoomEntity> rooms = em.createNativeQuery(" select distinct r.id, r.roomType, r.windowsExposure " +
+                "from  RoomEntity r left join RoomEntity_bookedDates b " +
+                "where b.bookedDates not in :datesRange " +
                 "and r.id = b.RoomEntity_id " +
                 "and r.roomType = :roomType " +
                 "and r.windowsExposure = :windowsExposure " +
-                "group by r.id, b.bookedDates",RoomEntity.class)
+                "order by r.id "
+                ,RoomEntity.class)
                 .setParameter("roomType", parametrizedRoom.getRoomType())
                 .setParameter("windowsExposure", parametrizedRoom.getWindowsExposure())
                 .setParameter("datesRange",datesRange)
                 .getResultList();
-
-        //// TODO: 01.10.16 select distinct zwraca duplikaty - left join?
-        // TODO: 01.10.16 wyniki bez zainicjalizowanych dat nie są zwracane
-
-        System.out.println("resultList.toString() = " + resultList.toString());
-
 
         LOGGER.debug("Number of rooms that meet the conditions: " + rooms.size());
         LOGGER.trace("Found rooms: " + rooms.toString());
