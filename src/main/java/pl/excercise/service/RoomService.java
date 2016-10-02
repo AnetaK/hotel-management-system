@@ -37,8 +37,10 @@ public class RoomService {
         System.out.println("datesRange = " + datesRange.toString());
 
         List<RoomEntity> rooms = em.createNativeQuery(" select distinct r.id, r.roomType, r.windowsExposure " +
-                "from  RoomEntity r left join RoomEntity_bookedDates b " +
-                "where b.bookedDates not in :datesRange " +
+                "from  RoomEntity r, RoomEntity_bookedDates b " +
+                "where b.bookedDates not in  :datesRange " +
+                //        "where :datesRange <> any (select from b )  " +
+                        // TODO: 02.10.16 subsety nie dzialają zupełnie dobrze - nie bierze skrajnych dat
                 "and r.id = b.RoomEntity_id " +
                 "and r.roomType = :roomType " +
                 "and r.windowsExposure = :windowsExposure " +
