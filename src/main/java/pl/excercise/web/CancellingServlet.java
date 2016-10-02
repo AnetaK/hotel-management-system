@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.service.DaysCount;
-import pl.excercise.service.RoomService;
+import pl.excercise.service.ReservarionService;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -28,7 +28,7 @@ public class CancellingServlet extends HttpServlet {
     GuestSessionScoped guest;
 
     @EJB
-    RoomService roomService;
+    ReservarionService reservationService;
 
 
     @Override
@@ -43,9 +43,9 @@ public class CancellingServlet extends HttpServlet {
         DaysCount daysCount = new DaysCount();
         List<String> datesToCancel = daysCount.returnDaysList(cancelFrom, cancelTo);
 
-        roomService.cancelReservation(reservationId,datesToCancel);
+        reservationService.cancelReservation(reservationId,datesToCancel);
 
-        List<Reservation> reservationList = roomService.extractReservationsForGuest(guest);
+        List<Reservation> reservationList = reservationService.extractReservationsForGuest(guest);
 
         request.getSession().setAttribute("emptyList",reservationList.isEmpty());
         request.getSession().setAttribute("reservation", reservationList);

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
-import pl.excercise.service.RoomService;
+import pl.excercise.service.ReservarionService;
 import pl.excercise.service.Validate;
 
 import javax.ejb.EJB;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(urlPatterns = "/bookRoom")
+@WebServlet(urlPatterns = "/createReservation")
 public class BookingServlet extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(BookingServlet.class);
@@ -29,7 +29,7 @@ public class BookingServlet extends HttpServlet {
     GuestSessionScoped guest;
 
     @EJB
-    RoomService roomService;
+    ReservarionService reservarionService;
 
     @EJB
     Validate validate;
@@ -59,11 +59,11 @@ public class BookingServlet extends HttpServlet {
                 .build();
 
         if (validate.validateNameContent(firstName,lastName)) {
-            roomService.bookRoom(guest, room, id);
+            reservarionService.createReservation(guest, room, id);
 
             LOGGER.debug("Room is booked");
 
-            List<Reservation> reservationList = roomService.extractReservationsForGuest(guest);
+            List<Reservation> reservationList = reservarionService.extractReservationsForGuest(guest);
 
             request.getSession().setAttribute("emptyList",reservationList.isEmpty());
             request.getSession().setAttribute("reservation", reservationList);
