@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(urlPatterns = "/createReservation")
+@WebServlet(urlPatterns = "/bookRoom")
 public class BookingServlet extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(BookingServlet.class);

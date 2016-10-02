@@ -1,7 +1,14 @@
 body {
   padding-top: 50px;
 }
-.forms-template {
+
+.lower{
+  padding-top: 2em;
+}
+
+.forms-template{
   padding: 40px 15px;
   text-align: center;
 }
+
+

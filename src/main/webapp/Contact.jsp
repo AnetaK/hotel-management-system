@@ -11,7 +11,7 @@
 
     <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-    <link href="css/starter-template.css" rel="stylesheet">
+    <link href="css/forms-template.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">

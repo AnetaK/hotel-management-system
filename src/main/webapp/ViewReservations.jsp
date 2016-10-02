@@ -11,7 +11,7 @@
 
     <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-    <link href="css/starter-template.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/forms-template.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
@@ -23,11 +23,12 @@
 
 </head>
 <body>
+
 <t:navbar></t:navbar>
 
-<div class="container lower forms-template">
-    <h1>Hotel Management System HireMe</h1>
+<div class="container lower forms-template " >
 
+    <h1>Hotel Management System HireMe</h1>
 
     <form method="POST" action="cancelReservation">
         <c:choose>
@@ -42,7 +43,8 @@
 
                         <div class="col-lg-12 ">
                             <div class="row">
-                                Room type: <c:out value="${reservation.room.roomType}"/>
+                                Reservation id: <c:out value="${reservation.id}"/>
+                                <br>Room type: <c:out value="${reservation.room.roomType}"/>
                                 <br>Windows exposure: <c:out value="${reservation.room.windowsExposure}"/>
                                 <br> Booked from <c:out value="${reservation.bookedFrom} to ${reservation.bookedTo}"/>
                                 <br> Room number <c:out value="${reservation.room.id}"/>
@@ -56,9 +58,9 @@
                                         </button>
                                     </c:otherwise>
                                 </c:choose>
+                                <br><br>
                             </div>
                         </div>
-                        <br><br>
                     </c:forEach>
                 </ul>
             </c:otherwise>
