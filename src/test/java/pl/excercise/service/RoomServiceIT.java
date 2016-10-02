@@ -152,6 +152,7 @@ public class RoomServiceIT {
                     .build());
 
             assertThat(availableRooms.size(), is(equalTo(1)));
+
             utx.commit();
             em.clear();
         } catch (NotSupportedException e) {
