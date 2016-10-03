@@ -39,14 +39,26 @@ public class RoomService {
         System.out.println("datesRange = " + datesRange.toString());
 
 
-        List<RoomEntity> rooms = em.createNativeQuery(" select distinct r.id, r.roomType, r.windowsExposure " +
-                        "from  RoomEntity r, RoomEntity_bookedDates b " +
-                        "where b.bookedDates not in :datesRange  " +
-                        "and r.id = b.RoomEntity_id " +
-                        "and r.roomType = :roomType " +
-                        "and r.windowsExposure = :windowsExposure " +
-                        "order by r.id "
-                , RoomEntity.class)
+//        List<RoomEntity> rooms = em.createNativeQuery(" select distinct r.id, r.roomType, r.windowsExposure " +
+//                        "from  RoomEntity r, RoomEntity_bookedDates b " +
+//                        "where b.bookedDates not in :datesRange  " +
+//                        "and r.id = b.RoomEntity_id " +
+//                        "and r.roomType = :roomType " +
+//                        "and r.windowsExposure = :windowsExposure " +
+//                        "order by r.id "
+//                , RoomEntity.class)
+//                .setParameter("roomType", parametrizedRoom.getRoomType())
+//                .setParameter("windowsExposure", parametrizedRoom.getWindowsExposure())
+//                .setParameter("datesRange", datesRange)
+//                .getResultList();
+
+        List<RoomEntity> rooms = em.createQuery(" select distinct r.id, r.roomType, r.windowsExposure " +
+                "from  RoomEntity r left join r.bookedDates b " +
+                "where b not in :datesRange  " +
+                "and r.roomType = :roomType " +
+                "and r.windowsExposure = :windowsExposure " +
+                "order by r.id "
+                 )
                 .setParameter("roomType", parametrizedRoom.getRoomType())
                 .setParameter("windowsExposure", parametrizedRoom.getWindowsExposure())
                 .setParameter("datesRange", datesRange)

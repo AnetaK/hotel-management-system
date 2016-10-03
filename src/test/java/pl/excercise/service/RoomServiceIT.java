@@ -78,7 +78,7 @@ public class RoomServiceIT {
                         LocalDate.parse("2016-05-10").plusDays(i).toString()
                 );
                 dates.add(
-                        LocalDate.parse("2016-05-10").plusDays(i+1).toString()
+                        LocalDate.parse("2016-05-10").plusDays(i+2).toString()
                 );
 
                 RoomEntity room = new RoomEntity();
