@@ -5,8 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
-import pl.excercise.service.DaysCount;
-import pl.excercise.service.ReservarionService;
+import pl.excercise.service.ReservationService;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -28,7 +27,7 @@ public class CancellingServlet extends HttpServlet {
     GuestSessionScoped guest;
 
     @EJB
-    ReservarionService reservationService;
+    ReservationService reservationService;
 
 
     @Override
@@ -37,13 +36,8 @@ public class CancellingServlet extends HttpServlet {
 
         String[] cancel = request.getParameter("cancel").split(";");
         long reservationId = Long.parseLong(cancel[0]);
-        String cancelFrom = cancel[1];
-        String cancelTo = cancel[2];
 
-        DaysCount daysCount = new DaysCount();
-        List<String> datesToCancel = daysCount.returnDaysList(cancelFrom, cancelTo);
-
-        reservationService.cancelReservation(reservationId,datesToCancel);
+        reservationService.cancelReservation(reservationId);
 
         List<Reservation> reservationList = reservationService.extractReservationsForGuest(guest);
 
@@ -51,11 +45,18 @@ public class CancellingServlet extends HttpServlet {
         request.getSession().setAttribute("reservation", reservationList);
         request.getSession().setAttribute("guest", guest);
 
-        LOGGER.trace("Cancelled flag[0]: " + reservationList.get(0).getCancelledFlag());
+        LOGGER.trace("Cancelled flag: " + reservationList.get(0).getCancelledFlag());
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("ViewReservations.jsp");
         dispatcher.forward(request, response);
 
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("bookRoom");
+        dispatcher.forward(request, response);
 
     }
 }

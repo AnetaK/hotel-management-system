@@ -16,52 +16,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Stateless
-public class ReservarionService {
+public class ReservationService {
 
-    private static final Logger LOGGER = LogManager.getLogger(ReservarionService.class);
+    private static final Logger LOGGER = LogManager.getLogger(ReservationService.class);
 
     @PersistenceContext
     EntityManager em;
-
-    public List<Reservation> extractReservationsForGuest(GuestSessionScoped guest) {
-        List<Reservation> resultList = em.createQuery("select r from Reservation r " +
-                "where r.guest.firstName=:firstName and r.guest.lastName=:lastName ")
-                .setParameter("firstName", guest.getFirstName())
-                .setParameter("lastName", guest.getLastName())
-                .getResultList();
-
-
-        LOGGER.trace("Reservations number extracted from DB: " + resultList.size());
-
-        if (resultList.isEmpty()) {
-            return Collections.EMPTY_LIST;
-        }
-        return resultList;
-    }
-
-    public void cancelReservation(long id, List<String> datesToCancel) {
-
-        em.createQuery("update Reservation set cancelledFlag = true where id=:id ")
-                .setParameter("id", id)
-                .executeUpdate();
-
-        Reservation reservation = em.find(Reservation.class, id);
-
-        LOGGER.trace("Reservation cancelled flag = " + reservation.getCancelledFlag());
-
-        RoomEntity roomEntity = reservation.getRoom();
-
-        List<String> roomDates = roomEntity.getBookedDates();
-        LOGGER.trace("Number of booked dates before cancelling: " + roomDates.size());
-
-        roomDates.removeIf(r -> datesToCancel.contains(r));
-        LOGGER.trace("Number of booked dates after cancelling: " + roomDates.size());
-
-        updateBookedDates(roomEntity.getId(), roomDates);
-
-        LOGGER.trace("Reservation {} is cancelled", id);
-
-    }
 
     public void createReservation(GuestSessionScoped guest, ParametrizedRoom room, long id) {
 
@@ -99,7 +59,55 @@ public class ReservarionService {
 
         updateBookedDates(id, extractedBookedDates);
 
-        LOGGER.trace("Booked dates number after update: " + extractedBookedDates.size());
+        RoomEntity newRoomEntity = em.find(RoomEntity.class, id);
+        LOGGER.trace("Booked dates number after update: " + newRoomEntity.getBookedDates().size());
+
+    }
+
+    public List<Reservation> extractReservationsForGuest(GuestSessionScoped guest) {
+        List<Reservation> resultList = em.createQuery("select r from Reservation r " +
+                "where r.guest.firstName=:firstName and r.guest.lastName=:lastName ")
+                .setParameter("firstName", guest.getFirstName())
+                .setParameter("lastName", guest.getLastName())
+                .getResultList();
+
+
+        LOGGER.trace("Reservations number extracted from DB: " + resultList.size());
+
+        if (resultList.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+        return resultList;
+    }
+
+    public void cancelReservation(long id) {
+        Reservation reservation = em.find(Reservation.class, id);
+
+        DaysCount dates = new DaysCount();
+        List<String> datesToRemove = dates.returnDaysList(reservation.getBookedFrom(), reservation.getBookedTo());
+
+        long roomId = reservation.getRoom().getId();
+        em.createQuery("update Reservation set cancelledFlag = true where id=:id ")
+                .setParameter("id", id)
+                .executeUpdate();
+
+        Reservation newReservation = em.find(Reservation.class, id);
+        LOGGER.trace("Cancelled flag: " + newReservation.getCancelledFlag());
+
+        RoomEntity roomEntity = em.find(RoomEntity.class, roomId);
+
+        List<String> roomDates = roomEntity.getBookedDates();
+        LOGGER.trace("Number of booked dates before cancelling: " + roomDates.size());
+
+        roomDates.removeIf(r -> datesToRemove.contains(r));
+
+        updateBookedDates(roomEntity.getId(), roomDates);
+
+        RoomEntity newRoomEntity = em.find(RoomEntity.class, roomId);
+
+        LOGGER.trace("Number of booked dates after cancelling: " + newRoomEntity.getBookedDates().size());
+
+        LOGGER.trace("Reservation {} is cancelled", id);
 
     }
 

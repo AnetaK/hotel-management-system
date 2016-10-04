@@ -8,6 +8,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import pl.excercise.model.Guest;
+import pl.excercise.model.GuestSessionScoped;
+import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
 import pl.excercise.model.room.RoomEntity;
 import pl.excercise.model.room.RoomType;
@@ -21,16 +24,16 @@ import javax.transaction.*;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
-public class RoomServiceIT {
-
+public class ReservationServiceIT {
     @Deployment
     public static WebArchive deployment() {
 
@@ -50,13 +53,19 @@ public class RoomServiceIT {
                 .addClass(DaysCount.class)
                 .addClass(ParametrizedRoom.class)
                 .addClass(RoomType.class)
-                .addClass(WindowsExposure.class);
+                .addClass(WindowsExposure.class)
+                .addClass(ReservationService.class)
+                .addClass(GuestSessionScoped.class)
+                .addClass(Reservation.class)
+                .addClass(Guest.class);
 
     }
 
     @EJB
-    RoomService service;
+    ReservationService service;
 
+    @Inject
+    GuestSessionScoped guest;
 
     @PersistenceContext
     EntityManager em;
@@ -68,6 +77,7 @@ public class RoomServiceIT {
     @InSequence(1)
     @Test
     public void initialise() {
+
         for (int i = 0; i < 5; i++) {
 
             try {
@@ -78,7 +88,7 @@ public class RoomServiceIT {
                         LocalDate.parse("2016-05-10").plusDays(i).toString()
                 );
                 dates.add(
-                        LocalDate.parse("2016-05-10").plusDays(i+2).toString()
+                        LocalDate.parse("2016-05-10").plusDays(i + 2).toString()
                 );
 
                 RoomEntity room = new RoomEntity();
@@ -107,22 +117,23 @@ public class RoomServiceIT {
 
     @InSequence(2)
     @Test
-    public void should_return_4_rooms() {
+    public void init2() {
+
+        guest.withFirstName("Any").withLastName("Name").build();
+        ParametrizedRoom room = new ParametrizedRoom()
+                .withRoomType(RoomType.ExclusiveRoom.toString())
+                .withWindowsExposure(WindowsExposure.EAST.toString())
+                .withAvailableFrom("2016-05-10")
+                .withAvailableTo("2016-05-10")
+                .build();
 
         try {
             utx.begin();
             em.joinTransaction();
-
-            List<RoomEntity> availableRooms = service.findAvailableRooms(new ParametrizedRoom()
-                    .withRoomType(RoomType.ExclusiveRoom.toString())
-                    .withWindowsExposure(WindowsExposure.EAST.toString())
-                    .withAvailableFrom("2016-05-10")
-                    .withAvailableTo("2016-05-10")
-                    .build());
-
-            assertThat(availableRooms.size(), is(equalTo(4)));
+            service.createReservation(guest, room, 3l);
             utx.commit();
             em.clear();
+
         } catch (NotSupportedException e) {
             e.printStackTrace();
         } catch (SystemException e) {
@@ -138,20 +149,15 @@ public class RoomServiceIT {
 
     @InSequence(3)
     @Test
-    public void should_return_1_room() {
+    public void should_create_one_reservation_for_guest() {
 
         try {
             utx.begin();
             em.joinTransaction();
 
-            List<RoomEntity> availableRooms = service.findAvailableRooms(new ParametrizedRoom()
-                    .withRoomType(RoomType.ExclusiveRoom.toString())
-                    .withWindowsExposure(WindowsExposure.EAST.toString())
-                    .withAvailableFrom("2016-05-10")
-                    .withAvailableTo("2016-05-13")
-                    .build());
+            List<Reservation> reservationList = service.extractReservationsForGuest(guest.withFirstName("Any").withLastName("Name").build());
 
-            assertThat(availableRooms.size(), is(equalTo(1)));
+            assertThat(reservationList.size(), is(equalTo(1)));
 
             utx.commit();
             em.clear();
@@ -170,20 +176,17 @@ public class RoomServiceIT {
 
     @InSequence(4)
     @Test
-    public void should_return_no_rooms() {
+    public void should_return_room_with_3_dates() {
 
         try {
             utx.begin();
             em.joinTransaction();
 
-            List<RoomEntity> availableRooms = service.findAvailableRooms(new ParametrizedRoom()
-                    .withRoomType(RoomType.ExclusiveRoom.toString())
-                    .withWindowsExposure(WindowsExposure.EAST.toString())
-                    .withAvailableFrom("2016-05-10")
-                    .withAvailableTo("2016-05-20")
-                    .build());
+            RoomEntity roomEntity = em.find(RoomEntity.class, 3l);
 
-            assertThat(availableRooms.size(), is(equalTo(0)));
+            assertThat(roomEntity.getBookedDates().size(), is(equalTo(3)));
+            assertTrue(roomEntity.getBookedDates().containsAll(Arrays.asList("2016-05-12","2016-05-14","2016-05-10")));
+
             utx.commit();
             em.clear();
         } catch (NotSupportedException e) {
@@ -201,15 +204,13 @@ public class RoomServiceIT {
 
     @InSequence(5)
     @Test
-    public void should_return_5_rooms() {
+    public void should_cancel_reservation() {
 
         try {
             utx.begin();
             em.joinTransaction();
 
-            List<RoomEntity> allRooms = service.findAllRooms();
-
-            assertThat(allRooms.size(), is(equalTo(5)));
+            service.cancelReservation(6l);
 
             utx.commit();
             em.clear();
@@ -225,4 +226,61 @@ public class RoomServiceIT {
             e.printStackTrace();
         }
     }
+
+    @InSequence(6)
+    @Test
+    public void should_return_cancel_reservation() {
+        try {
+            utx.begin();
+            em.joinTransaction();
+
+            Reservation reservation = em.find(Reservation.class, 6l);
+
+            assertThat(reservation.getCancelledFlag(), is(equalTo(true)));
+            assertThat(reservation.getRoom().getId(), is(equalTo(3l)));
+
+            utx.commit();
+            em.clear();
+        } catch (NotSupportedException e) {
+            e.printStackTrace();
+        } catch (SystemException e) {
+            e.printStackTrace();
+        } catch (HeuristicMixedException e) {
+            e.printStackTrace();
+        } catch (HeuristicRollbackException e) {
+            e.printStackTrace();
+        } catch (RollbackException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @InSequence(7)
+    @Test
+    public void should_return_room_with_2_dates() {
+
+        try {
+            utx.begin();
+            em.joinTransaction();
+
+            RoomEntity roomEntity = em.find(RoomEntity.class, 3l);
+
+            assertThat(roomEntity.getBookedDates().size(), is(equalTo(2)));
+            assertTrue(roomEntity.getBookedDates().containsAll(Arrays.asList("2016-05-12","2016-05-14")));
+
+            utx.commit();
+            em.clear();
+        } catch (NotSupportedException e) {
+            e.printStackTrace();
+        } catch (SystemException e) {
+            e.printStackTrace();
+        } catch (HeuristicMixedException e) {
+            e.printStackTrace();
+        } catch (HeuristicRollbackException e) {
+            e.printStackTrace();
+        } catch (RollbackException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
