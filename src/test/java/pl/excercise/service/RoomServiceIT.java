@@ -210,6 +210,7 @@ public class RoomServiceIT {
             List<RoomEntity> allRooms = service.findAllRooms();
 
             assertThat(allRooms.size(), is(equalTo(5)));
+
             utx.commit();
             em.clear();
         } catch (NotSupportedException e) {
