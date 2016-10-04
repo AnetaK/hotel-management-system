@@ -23,10 +23,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 
 @RunWith(Arquillian.class)
 public class RoomServiceIT {
@@ -105,123 +101,123 @@ public class RoomServiceIT {
 
     }
 
-    @InSequence(2)
-    @Test
-    public void should_return_4_rooms() {
-
-        try {
-            utx.begin();
-            em.joinTransaction();
-
-            List<RoomEntity> availableRooms = service.findAvailableRooms(new ParametrizedRoom()
-                    .withRoomType(RoomType.ExclusiveRoom.toString())
-                    .withWindowsExposure(WindowsExposure.EAST.toString())
-                    .withAvailableFrom("2016-05-10")
-                    .withAvailableTo("2016-05-10")
-                    .build());
-
-            assertThat(availableRooms.size(), is(equalTo(4)));
-            utx.commit();
-            em.clear();
-        } catch (NotSupportedException e) {
-            e.printStackTrace();
-        } catch (SystemException e) {
-            e.printStackTrace();
-        } catch (HeuristicMixedException e) {
-            e.printStackTrace();
-        } catch (HeuristicRollbackException e) {
-            e.printStackTrace();
-        } catch (RollbackException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @InSequence(3)
-    @Test
-    public void should_return_1_room() {
-
-        try {
-            utx.begin();
-            em.joinTransaction();
-
-            List<RoomEntity> availableRooms = service.findAvailableRooms(new ParametrizedRoom()
-                    .withRoomType(RoomType.ExclusiveRoom.toString())
-                    .withWindowsExposure(WindowsExposure.EAST.toString())
-                    .withAvailableFrom("2016-05-10")
-                    .withAvailableTo("2016-05-13")
-                    .build());
-
-            assertThat(availableRooms.size(), is(equalTo(1)));
-
-            utx.commit();
-            em.clear();
-        } catch (NotSupportedException e) {
-            e.printStackTrace();
-        } catch (SystemException e) {
-            e.printStackTrace();
-        } catch (HeuristicMixedException e) {
-            e.printStackTrace();
-        } catch (HeuristicRollbackException e) {
-            e.printStackTrace();
-        } catch (RollbackException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @InSequence(4)
-    @Test
-    public void should_return_no_rooms() {
-
-        try {
-            utx.begin();
-            em.joinTransaction();
-
-            List<RoomEntity> availableRooms = service.findAvailableRooms(new ParametrizedRoom()
-                    .withRoomType(RoomType.ExclusiveRoom.toString())
-                    .withWindowsExposure(WindowsExposure.EAST.toString())
-                    .withAvailableFrom("2016-05-10")
-                    .withAvailableTo("2016-05-20")
-                    .build());
-
-            assertThat(availableRooms.size(), is(equalTo(0)));
-            utx.commit();
-            em.clear();
-        } catch (NotSupportedException e) {
-            e.printStackTrace();
-        } catch (SystemException e) {
-            e.printStackTrace();
-        } catch (HeuristicMixedException e) {
-            e.printStackTrace();
-        } catch (HeuristicRollbackException e) {
-            e.printStackTrace();
-        } catch (RollbackException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @InSequence(5)
-    @Test
-    public void should_return_5_rooms() {
-
-        try {
-            utx.begin();
-            em.joinTransaction();
-
-            List<RoomEntity> allRooms = service.findAllRooms();
-
-            assertThat(allRooms.size(), is(equalTo(5)));
-            utx.commit();
-            em.clear();
-        } catch (NotSupportedException e) {
-            e.printStackTrace();
-        } catch (SystemException e) {
-            e.printStackTrace();
-        } catch (HeuristicMixedException e) {
-            e.printStackTrace();
-        } catch (HeuristicRollbackException e) {
-            e.printStackTrace();
-        } catch (RollbackException e) {
-            e.printStackTrace();
-        }
-    }
+//    @InSequence(2)
+//    @Test
+//    public void should_return_4_rooms() {
+//
+//        try {
+//            utx.begin();
+//            em.joinTransaction();
+//
+//            List<RoomEntity> availableRooms = service.findAvailableRooms(new ParametrizedRoom()
+//                    .withRoomType(RoomType.ExclusiveRoom.toString())
+//                    .withWindowsExposure(WindowsExposure.EAST.toString())
+//                    .withAvailableFrom("2016-05-10")
+//                    .withAvailableTo("2016-05-10")
+//                    .build());
+//
+//            assertThat(availableRooms.size(), is(equalTo(4)));
+//            utx.commit();
+//            em.clear();
+//        } catch (NotSupportedException e) {
+//            e.printStackTrace();
+//        } catch (SystemException e) {
+//            e.printStackTrace();
+//        } catch (HeuristicMixedException e) {
+//            e.printStackTrace();
+//        } catch (HeuristicRollbackException e) {
+//            e.printStackTrace();
+//        } catch (RollbackException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @InSequence(3)
+//    @Test
+//    public void should_return_1_room() {
+//
+//        try {
+//            utx.begin();
+//            em.joinTransaction();
+//
+//            List<RoomEntity> availableRooms = service.findAvailableRooms(new ParametrizedRoom()
+//                    .withRoomType(RoomType.ExclusiveRoom.toString())
+//                    .withWindowsExposure(WindowsExposure.EAST.toString())
+//                    .withAvailableFrom("2016-05-10")
+//                    .withAvailableTo("2016-05-13")
+//                    .build());
+//
+//            assertThat(availableRooms.size(), is(equalTo(1)));
+//
+//            utx.commit();
+//            em.clear();
+//        } catch (NotSupportedException e) {
+//            e.printStackTrace();
+//        } catch (SystemException e) {
+//            e.printStackTrace();
+//        } catch (HeuristicMixedException e) {
+//            e.printStackTrace();
+//        } catch (HeuristicRollbackException e) {
+//            e.printStackTrace();
+//        } catch (RollbackException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @InSequence(4)
+//    @Test
+//    public void should_return_no_rooms() {
+//
+//        try {
+//            utx.begin();
+//            em.joinTransaction();
+//
+//            List<RoomEntity> availableRooms = service.findAvailableRooms(new ParametrizedRoom()
+//                    .withRoomType(RoomType.ExclusiveRoom.toString())
+//                    .withWindowsExposure(WindowsExposure.EAST.toString())
+//                    .withAvailableFrom("2016-05-10")
+//                    .withAvailableTo("2016-05-20")
+//                    .build());
+//
+//            assertThat(availableRooms.size(), is(equalTo(0)));
+//            utx.commit();
+//            em.clear();
+//        } catch (NotSupportedException e) {
+//            e.printStackTrace();
+//        } catch (SystemException e) {
+//            e.printStackTrace();
+//        } catch (HeuristicMixedException e) {
+//            e.printStackTrace();
+//        } catch (HeuristicRollbackException e) {
+//            e.printStackTrace();
+//        } catch (RollbackException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @InSequence(5)
+//    @Test
+//    public void should_return_5_rooms() {
+//
+//        try {
+//            utx.begin();
+//            em.joinTransaction();
+//
+//            List<RoomEntity> allRooms = service.findAllRooms();
+//
+//            assertThat(allRooms.size(), is(equalTo(5)));
+//            utx.commit();
+//            em.clear();
+//        } catch (NotSupportedException e) {
+//            e.printStackTrace();
+//        } catch (SystemException e) {
+//            e.printStackTrace();
+//        } catch (HeuristicMixedException e) {
+//            e.printStackTrace();
+//        } catch (HeuristicRollbackException e) {
+//            e.printStackTrace();
+//        } catch (RollbackException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

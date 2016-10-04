@@ -16,6 +16,9 @@
             <ul class="nav navbar-nav">
                 <li><a href="/hotel-mgmt-system/select">Select room</a></li>
             </ul>
+            <ul class="nav navbar-nav">
+                <li><a href="/hotel-mgmt-system/bookRoom">View reservations</a></li>
+            </ul>
         </div>
     </div>
 </nav>

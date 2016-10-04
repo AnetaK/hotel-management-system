@@ -55,17 +55,16 @@ public class BookingServlet extends HttpServlet {
                 .build();
 
         Validate validate = new Validate();
-        if (validate.validateNameContent(firstName,lastName)) {
+        if (validate.validateNameContent(firstName, lastName)) {
             reservarionService.createReservation(guest, room, id);
 
             LOGGER.debug("Room is booked");
 
             List<Reservation> reservationList = reservarionService.extractReservationsForGuest(guest);
 
-            request.getSession().setAttribute("emptyList",reservationList.isEmpty());
+            request.getSession().setAttribute("emptyList", reservationList.isEmpty());
             request.getSession().setAttribute("reservation", reservationList);
             request.getSession().setAttribute("guest", guest);
-
 
             RequestDispatcher dispatcher = request.getRequestDispatcher("ViewReservations.jsp");
             dispatcher.forward(request, response);
@@ -80,5 +79,21 @@ public class BookingServlet extends HttpServlet {
 
     }
 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        List<Reservation> reservationList = reservarionService.extractReservationsForGuest(guest);
+
+        request.getSession().setAttribute("emptyList", reservationList.isEmpty());
+        request.getSession().setAttribute("reservation", reservationList);
+        request.getSession().setAttribute("guest", guest);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("ViewReservations.jsp");
+        dispatcher.forward(request, response);
+
+    }
 
 }
+
+
+

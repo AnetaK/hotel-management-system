@@ -39,17 +39,21 @@ public class ReservarionService {
         return resultList;
     }
 
-    public void cancelReservation(long id, List<String> datesToCancel) {
-
+    public long cancelReservation(long id) {
+        Reservation reservation = em.find(Reservation.class, id);
+        long roomId = reservation.getRoom().getId();
         em.createQuery("update Reservation set cancelledFlag = true where id=:id ")
                 .setParameter("id", id)
                 .executeUpdate();
 
-        Reservation reservation = em.find(Reservation.class, id);
+        Reservation newReservation = em.find(Reservation.class, id);
+        LOGGER.trace("Cancelled flag: " + newReservation.getCancelledFlag());
 
-        LOGGER.trace("Reservation cancelled flag = " + reservation.getCancelledFlag());
+        return roomId;
+    }
+    public  void updateDatesInRoomEntity(long id, List<String> datesToCancel ){
 
-        RoomEntity roomEntity = reservation.getRoom();
+        RoomEntity roomEntity = em.find(RoomEntity.class,id);
 
         List<String> roomDates = roomEntity.getBookedDates();
         LOGGER.trace("Number of booked dates before cancelling: " + roomDates.size());
@@ -99,7 +103,8 @@ public class ReservarionService {
 
         updateBookedDates(id, extractedBookedDates);
 
-        LOGGER.trace("Booked dates number after update: " + extractedBookedDates.size());
+        RoomEntity newRoomEntity = em.find(RoomEntity.class, id);
+        LOGGER.trace("Booked dates number after update: " + newRoomEntity.getBookedDates().size());
 
     }
 
