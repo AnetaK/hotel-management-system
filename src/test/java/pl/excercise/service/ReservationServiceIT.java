@@ -24,16 +24,16 @@ import javax.transaction.*;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class ReservationServiceIT {
-
     @Deployment
     public static WebArchive deployment() {
 
@@ -54,7 +54,7 @@ public class ReservationServiceIT {
                 .addClass(ParametrizedRoom.class)
                 .addClass(RoomType.class)
                 .addClass(WindowsExposure.class)
-                .addClass(ReservarionService.class)
+                .addClass(ReservationService.class)
                 .addClass(GuestSessionScoped.class)
                 .addClass(Reservation.class)
                 .addClass(Guest.class);
@@ -62,7 +62,7 @@ public class ReservationServiceIT {
     }
 
     @EJB
-    ReservarionService service;
+    ReservationService service;
 
     @Inject
     GuestSessionScoped guest;
@@ -130,7 +130,7 @@ public class ReservationServiceIT {
         try {
             utx.begin();
             em.joinTransaction();
-            service.createReservation(guest, room, 4l);
+            service.createReservation(guest, room, 3l);
             utx.commit();
             em.clear();
 
@@ -149,7 +149,7 @@ public class ReservationServiceIT {
 
     @InSequence(3)
     @Test
-    public void should_return_one_reservation_for_guest() {
+    public void should_create_one_reservation_for_guest() {
 
         try {
             utx.begin();
@@ -158,7 +158,6 @@ public class ReservationServiceIT {
             List<Reservation> reservationList = service.extractReservationsForGuest(guest.withFirstName("Any").withLastName("Name").build());
 
             assertThat(reservationList.size(), is(equalTo(1)));
-            assertThat(reservationList.get(0).getId(), is(equalTo(6l)));
 
             utx.commit();
             em.clear();
@@ -177,13 +176,16 @@ public class ReservationServiceIT {
 
     @InSequence(4)
     @Test
-    public void should_cancel_reservation() {
+    public void should_return_room_with_3_dates() {
 
         try {
             utx.begin();
             em.joinTransaction();
 
-            service.cancelReservation(0l);
+            RoomEntity roomEntity = em.find(RoomEntity.class, 3l);
+
+            assertThat(roomEntity.getBookedDates().size(), is(equalTo(3)));
+            assertTrue(roomEntity.getBookedDates().containsAll(Arrays.asList("2016-05-12","2016-05-14","2016-05-10")));
 
             utx.commit();
             em.clear();
@@ -202,14 +204,14 @@ public class ReservationServiceIT {
 
     @InSequence(5)
     @Test
-    public void should_return_cancel_reservation() {
+    public void should_cancel_reservation() {
+
         try {
             utx.begin();
             em.joinTransaction();
 
-            Reservation reservation = em.find(Reservation.class, 6l);
+            service.cancelReservation(6l);
 
-            assertThat(reservation.getCancelledFlag(), is(equalTo(true)));
             utx.commit();
             em.clear();
         } catch (NotSupportedException e) {
@@ -224,5 +226,61 @@ public class ReservationServiceIT {
             e.printStackTrace();
         }
     }
+
+    @InSequence(6)
+    @Test
+    public void should_return_cancel_reservation() {
+        try {
+            utx.begin();
+            em.joinTransaction();
+
+            Reservation reservation = em.find(Reservation.class, 6l);
+
+            assertThat(reservation.getCancelledFlag(), is(equalTo(true)));
+            assertThat(reservation.getRoom().getId(), is(equalTo(3l)));
+
+            utx.commit();
+            em.clear();
+        } catch (NotSupportedException e) {
+            e.printStackTrace();
+        } catch (SystemException e) {
+            e.printStackTrace();
+        } catch (HeuristicMixedException e) {
+            e.printStackTrace();
+        } catch (HeuristicRollbackException e) {
+            e.printStackTrace();
+        } catch (RollbackException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @InSequence(7)
+    @Test
+    public void should_return_room_with_2_dates() {
+
+        try {
+            utx.begin();
+            em.joinTransaction();
+
+            RoomEntity roomEntity = em.find(RoomEntity.class, 3l);
+
+            assertThat(roomEntity.getBookedDates().size(), is(equalTo(2)));
+            assertTrue(roomEntity.getBookedDates().containsAll(Arrays.asList("2016-05-12","2016-05-14")));
+
+            utx.commit();
+            em.clear();
+        } catch (NotSupportedException e) {
+            e.printStackTrace();
+        } catch (SystemException e) {
+            e.printStackTrace();
+        } catch (HeuristicMixedException e) {
+            e.printStackTrace();
+        } catch (HeuristicRollbackException e) {
+            e.printStackTrace();
+        } catch (RollbackException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

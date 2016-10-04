@@ -5,8 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
-import pl.excercise.service.DaysCount;
-import pl.excercise.service.ReservarionService;
+import pl.excercise.service.ReservationService;
 
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -28,7 +27,7 @@ public class CancellingServlet extends HttpServlet {
     GuestSessionScoped guest;
 
     @EJB
-    ReservarionService reservationService;
+    ReservationService reservationService;
 
 
     @Override
@@ -37,14 +36,8 @@ public class CancellingServlet extends HttpServlet {
 
         String[] cancel = request.getParameter("cancel").split(";");
         long reservationId = Long.parseLong(cancel[0]);
-        String cancelFrom = cancel[1];
-        String cancelTo = cancel[2];
 
-        DaysCount daysCount = new DaysCount();
-        List<String> datesToCancel = daysCount.returnDaysList(cancelFrom, cancelTo);
-
-        long roomId = reservationService.cancelReservation(reservationId);
-        reservationService.updateDatesInRoomEntity(roomId,datesToCancel);
+        reservationService.cancelReservation(reservationId);
 
         List<Reservation> reservationList = reservationService.extractReservationsForGuest(guest);
 

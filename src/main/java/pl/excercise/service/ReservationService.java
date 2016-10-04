@@ -16,9 +16,9 @@ import java.util.Collections;
 import java.util.List;
 
 @Stateless
-public class ReservarionService {
+public class ReservationService {
 
-    private static final Logger LOGGER = LogManager.getLogger(ReservarionService.class);
+    private static final Logger LOGGER = LogManager.getLogger(ReservationService.class);
 
     @PersistenceContext
     EntityManager em;
@@ -39,8 +39,12 @@ public class ReservarionService {
         return resultList;
     }
 
-    public long cancelReservation(long id) {
+    public void cancelReservation(long id) {
         Reservation reservation = em.find(Reservation.class, id);
+
+        DaysCount dates = new DaysCount();
+        List<String> datesToRemove = dates.returnDaysList(reservation.getBookedFrom(), reservation.getBookedTo());
+
         long roomId = reservation.getRoom().getId();
         em.createQuery("update Reservation set cancelledFlag = true where id=:id ")
                 .setParameter("id", id)
@@ -49,19 +53,18 @@ public class ReservarionService {
         Reservation newReservation = em.find(Reservation.class, id);
         LOGGER.trace("Cancelled flag: " + newReservation.getCancelledFlag());
 
-        return roomId;
-    }
-    public  void updateDatesInRoomEntity(long id, List<String> datesToCancel ){
-
-        RoomEntity roomEntity = em.find(RoomEntity.class,id);
+        RoomEntity roomEntity = em.find(RoomEntity.class, roomId);
 
         List<String> roomDates = roomEntity.getBookedDates();
         LOGGER.trace("Number of booked dates before cancelling: " + roomDates.size());
 
-        roomDates.removeIf(r -> datesToCancel.contains(r));
-        LOGGER.trace("Number of booked dates after cancelling: " + roomDates.size());
+        roomDates.removeIf(r -> datesToRemove.contains(r));
 
         updateBookedDates(roomEntity.getId(), roomDates);
+
+        RoomEntity newRoomEntity = em.find(RoomEntity.class, roomId);
+
+        LOGGER.trace("Number of booked dates after cancelling: " + newRoomEntity.getBookedDates().size());
 
         LOGGER.trace("Reservation {} is cancelled", id);
 

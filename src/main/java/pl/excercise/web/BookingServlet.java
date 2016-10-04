@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
-import pl.excercise.service.ReservarionService;
+import pl.excercise.service.ReservationService;
 import pl.excercise.service.Validate;
 
 import javax.ejb.EJB;
@@ -29,7 +29,7 @@ public class BookingServlet extends HttpServlet {
     GuestSessionScoped guest;
 
     @EJB
-    ReservarionService reservarionService;
+    ReservationService reservationService;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -56,11 +56,11 @@ public class BookingServlet extends HttpServlet {
 
         Validate validate = new Validate();
         if (validate.validateNameContent(firstName, lastName)) {
-            reservarionService.createReservation(guest, room, id);
+            reservationService.createReservation(guest, room, id);
 
             LOGGER.debug("Room is booked");
 
-            List<Reservation> reservationList = reservarionService.extractReservationsForGuest(guest);
+            List<Reservation> reservationList = reservationService.extractReservationsForGuest(guest);
 
             request.getSession().setAttribute("emptyList", reservationList.isEmpty());
             request.getSession().setAttribute("reservation", reservationList);
@@ -82,7 +82,7 @@ public class BookingServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        List<Reservation> reservationList = reservarionService.extractReservationsForGuest(guest);
+        List<Reservation> reservationList = reservationService.extractReservationsForGuest(guest);
 
         request.getSession().setAttribute("emptyList", reservationList.isEmpty());
         request.getSession().setAttribute("reservation", reservationList);
