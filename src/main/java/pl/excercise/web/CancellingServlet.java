@@ -45,7 +45,7 @@ public class CancellingServlet extends HttpServlet {
         request.getSession().setAttribute("reservation", reservationList);
         request.getSession().setAttribute("guest", guest);
 
-        LOGGER.trace("Cancelled flag[0]: " + reservationList.get(0).getCancelledFlag());
+        LOGGER.trace("Cancelled flag: " + reservationList.get(0).getCancelledFlag());
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("ViewReservations.jsp");
         dispatcher.forward(request, response);

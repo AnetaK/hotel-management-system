@@ -23,6 +23,47 @@ public class ReservationService {
     @PersistenceContext
     EntityManager em;
 
+    public void createReservation(GuestSessionScoped guest, ParametrizedRoom room, long id) {
+
+        DaysCount daysCount = new DaysCount();
+        List<String> bookedDates = daysCount.returnDaysList(room.getAvailableFrom(), room.getAvailableTo());
+
+        RoomEntity roomEntity = new RoomEntity()
+                .withRoomType(room.getRoomType())
+                .withWindowsExposure(room.getWindowsExposure())
+                .withBookedDates(bookedDates)
+                .build();
+
+        roomEntity.setId(id);
+
+        Reservation reservation = new Reservation()
+                .withGuest(new Guest().withFirstName(guest.getFirstName()).withLastName(guest.getLastName()).build())
+                .withRoom(roomEntity)
+                .withBookedFrom(room.getAvailableFrom())
+                .withBookedTo(room.getAvailableTo())
+                .withCancelledFlag(false)
+                .build();
+
+        System.out.println("reservation = " + reservation.toString());
+
+        em.persist(reservation);
+
+        LOGGER.debug("Reservation persisted succesfully");
+
+        RoomEntity oldRoomEntity = em.find(RoomEntity.class, id);
+
+        List<String> extractedBookedDates = oldRoomEntity.getBookedDates();
+        LOGGER.trace("Booked dates number before update: " + extractedBookedDates.size());
+
+        extractedBookedDates.addAll(bookedDates);
+
+        updateBookedDates(id, extractedBookedDates);
+
+        RoomEntity newRoomEntity = em.find(RoomEntity.class, id);
+        LOGGER.trace("Booked dates number after update: " + newRoomEntity.getBookedDates().size());
+
+    }
+
     public List<Reservation> extractReservationsForGuest(GuestSessionScoped guest) {
         List<Reservation> resultList = em.createQuery("select r from Reservation r " +
                 "where r.guest.firstName=:firstName and r.guest.lastName=:lastName ")
@@ -67,47 +108,6 @@ public class ReservationService {
         LOGGER.trace("Number of booked dates after cancelling: " + newRoomEntity.getBookedDates().size());
 
         LOGGER.trace("Reservation {} is cancelled", id);
-
-    }
-
-    public void createReservation(GuestSessionScoped guest, ParametrizedRoom room, long id) {
-
-        DaysCount daysCount = new DaysCount();
-        List<String> bookedDates = daysCount.returnDaysList(room.getAvailableFrom(), room.getAvailableTo());
-
-        RoomEntity roomEntity = new RoomEntity()
-                .withRoomType(room.getRoomType())
-                .withWindowsExposure(room.getWindowsExposure())
-                .withBookedDates(bookedDates)
-                .build();
-
-        roomEntity.setId(id);
-
-        Reservation reservation = new Reservation()
-                .withGuest(new Guest().withFirstName(guest.getFirstName()).withLastName(guest.getLastName()).build())
-                .withRoom(roomEntity)
-                .withBookedFrom(room.getAvailableFrom())
-                .withBookedTo(room.getAvailableTo())
-                .withCancelledFlag(false)
-                .build();
-
-        System.out.println("reservation = " + reservation.toString());
-
-        em.persist(reservation);
-
-        LOGGER.debug("Reservation persisted succesfully");
-
-        RoomEntity oldRoomEntity = em.find(RoomEntity.class, id);
-
-        List<String> extractedBookedDates = oldRoomEntity.getBookedDates();
-        LOGGER.trace("Booked dates number before update: " + extractedBookedDates.size());
-
-        extractedBookedDates.addAll(bookedDates);
-
-        updateBookedDates(id, extractedBookedDates);
-
-        RoomEntity newRoomEntity = em.find(RoomEntity.class, id);
-        LOGGER.trace("Booked dates number after update: " + newRoomEntity.getBookedDates().size());
 
     }
 
