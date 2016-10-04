@@ -50,6 +50,13 @@ public class CancellingServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("ViewReservations.jsp");
         dispatcher.forward(request, response);
 
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("bookRoom");
+        dispatcher.forward(request, response);
 
     }
 }
