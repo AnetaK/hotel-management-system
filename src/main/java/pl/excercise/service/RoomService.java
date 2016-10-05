@@ -9,8 +9,12 @@ import pl.excercise.model.room.RoomEntity;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDate;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Stateless
 public class RoomService {
@@ -37,33 +41,22 @@ public class RoomService {
 
         System.out.println("datesRange = " + datesRange.toString());
 
-        List<RoomEntity> rooms = em.createQuery(" select distinct r " +
-                "from  RoomEntity r left join r.bookedDates b " +
-                "where r.roomType = :roomType " +
-                "and r.windowsExposure = :windowsExposure " +
-                "order by r.id "
-                 )
-                .setParameter("roomType", parametrizedRoom.getRoomType())
-                .setParameter("windowsExposure", parametrizedRoom.getWindowsExposure())
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<RoomEntity> criteria = builder.createQuery(RoomEntity.class);
+        Root<RoomEntity> roomEntityRoot = criteria.from(RoomEntity.class);
+
+        criteria.select(roomEntityRoot);
+
+        List<Predicate> bookedDates = datesRange.stream().map(s -> builder.isNotMember(s, roomEntityRoot.get("bookedDates")))
+                .collect(Collectors.toList());
+
+        criteria.where(builder.equal(roomEntityRoot.get("roomType"), parametrizedRoom.getRoomType()),
+                builder.equal(roomEntityRoot.get("windowsExposure"), parametrizedRoom.getWindowsExposure()));
+        criteria.where(bookedDates.toArray(new Predicate[bookedDates.size()]));
+        criteria.orderBy(builder.asc(roomEntityRoot.get("id")));
+
+        List<RoomEntity> rooms = em.createQuery(criteria)
                 .getResultList();
-
-        for (String date :
-                datesRange) {
-            rooms.removeIf(r -> r.getBookedDates().contains(date));
-        }
-
-//        List<RoomEntity> rooms = em.createQuery(" select distinct r " +
-//                "from  RoomEntity r left join r.bookedDates b " +
-//                "where b not in :datesRange  " +
-//                "and r.roomType = :roomType " +
-//                "and r.windowsExposure = :windowsExposure " +
-//                "order by r.id "
-//        )
-//                .setParameter("roomType", parametrizedRoom.getRoomType())
-//                .setParameter("windowsExposure", parametrizedRoom.getWindowsExposure())
-//                .setParameter("datesRange", datesRange)
-//                .getResultList();
-// TODO: 04.10.16 zapytanie sql bez dodatkowej operacji z listą
 
         LOGGER.debug("Number of rooms that meet the conditions: " + rooms.size());
         LOGGER.trace("Found rooms: " + rooms.toString());
