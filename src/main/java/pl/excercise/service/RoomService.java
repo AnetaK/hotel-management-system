@@ -47,12 +47,13 @@ public class RoomService {
 
         criteria.select(roomEntityRoot);
 
-        List<Predicate> bookedDates = datesRange.stream().map(s -> builder.isNotMember(s, roomEntityRoot.get("bookedDates")))
+        List<Predicate> predicates = datesRange.stream().map(s -> builder.isNotMember(s, roomEntityRoot.get("bookedDates")))
                 .collect(Collectors.toList());
 
-        criteria.where(builder.equal(roomEntityRoot.get("roomType"), parametrizedRoom.getRoomType()),
-                builder.equal(roomEntityRoot.get("windowsExposure"), parametrizedRoom.getWindowsExposure()));
-        criteria.where(bookedDates.toArray(new Predicate[bookedDates.size()]));
+        predicates.add(builder.like(roomEntityRoot.get("roomType"), parametrizedRoom.getRoomType()));
+        predicates.add(builder.like(roomEntityRoot.get("windowsExposure"), parametrizedRoom.getWindowsExposure()));
+
+        criteria.where(predicates.toArray(new Predicate[predicates.size()]));
         criteria.orderBy(builder.asc(roomEntityRoot.get("id")));
 
         List<RoomEntity> rooms = em.createQuery(criteria)
