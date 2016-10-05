@@ -27,35 +27,43 @@
     <h1>Hotel Management System HireMe</h1>
 
     <h3>Available rooms</h3>
-    <form method="POST" action="bookRoom">
-        <div class="form-group row lower">
+    <c:choose>
+        <c:when test="${not empty errorMessage}">
+            <c:out value="${errorMessage}"/>
+        </c:when>
+        <c:otherwise>
+            <form method="POST" action="bookRoom">
+                <div class="form-group row lower">
 
-            <div class="col-lg-offset-3  col-lg-6">
-                <select name="availableRooms" class="selectpicker show-tick form-control" data-live-search="true">
-                    <c:forEach items="${availableRooms}" var="availableRooms">
-                        <option
-                                value="${availableRooms.id};${availableRooms.roomType};${availableRooms.windowsExposure}">
-                            Room type: <c:out value="${availableRooms.roomType}"/>. Windows exposure: <c:out
-                                value="${availableRooms.windowsExposure}"/>. Room number: <c:out value="${availableRooms.id}"/>
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
-        </div>
-        <input type="hidden" value="${availableFrom}" name="availableFrom"/>
-        <input type="hidden" value="${availableTo}" name="availableTo"/>
+                    <div class="col-lg-offset-3  col-lg-6">
+                        <select name="availableRooms" class="selectpicker show-tick form-control"
+                                data-live-search="true">
+                            <c:forEach items="${availableRooms}" var="availableRooms">
+                                <option
+                                        value="${availableRooms.id};${availableRooms.roomType};${availableRooms.windowsExposure}">
+                                    Room type: <c:out value="${availableRooms.roomType}"/>. Windows exposure: <c:out
+                                        value="${availableRooms.windowsExposure}"/>. Room number: <c:out
+                                        value="${availableRooms.id}"/>
+                                </option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" value="${availableFrom}" name="availableFrom"/>
+                <input type="hidden" value="${availableTo}" name="availableTo"/>
 
-        <h4>Type your first name</h4>
-        <input type="text" name="firstName"/>
+                <h4>Type your first name</h4>
+                <input type="text" name="firstName"/>
 
-        <h4>Type your last name</h4>
-        <input type="text" name="lastName"/>
-        <br>
-        <button type="submit"
-                name="book">Book
-        </button>
-    </form>
-
+                <h4>Type your last name</h4>
+                <input type="text" name="lastName"/>
+                <br>
+                <button type="submit"
+                        name="book">Book
+                </button>
+            </form>
+        </c:otherwise>
+    </c:choose>
 </div>
 
 </body>

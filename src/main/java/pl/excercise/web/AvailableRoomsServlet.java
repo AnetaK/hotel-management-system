@@ -46,6 +46,10 @@ public class AvailableRoomsServlet extends HttpServlet {
 
             List<RoomEntity> availableRooms = roomService.findAvailableRooms(parametrizedRoom);
 
+            if(availableRooms.isEmpty()){
+                request.setAttribute("errorMessage", "There is no available rooms for selected criteria!");
+            }
+
             request.setAttribute("availableFrom", availableFrom);
             request.setAttribute("availableTo", availableTo);
             request.setAttribute("availableRooms", availableRooms);
