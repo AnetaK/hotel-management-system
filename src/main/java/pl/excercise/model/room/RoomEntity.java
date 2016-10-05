@@ -15,6 +15,7 @@ public class RoomEntity implements Serializable {
     private String roomType;
 
     @ElementCollection
+    @Column(length=10000)
     private List<String> bookedDates;
 
     private String windowsExposure;
