@@ -112,10 +112,10 @@ public class ReservationService {
     }
 
     private void updateBookedDates(long id, List<String> bookedDates) {
-        em.createNativeQuery("delete from RoomEntity_bookedDates where  RoomEntity_id=:id ").setParameter("id", id).executeUpdate();
-        em.createNativeQuery("insert into RoomEntity_bookedDates (RoomEntity_id, bookedDates) values (:id, :bookedDates) ")
+        em.createNativeQuery("update  RoomEntity_bookedDates set bookedDates = :bookedDates where RoomEntity_id=:id  ")
                 .setParameter("id", id)
                 .setParameter("bookedDates", bookedDates)
                 .executeUpdate();
+
     }
 }
