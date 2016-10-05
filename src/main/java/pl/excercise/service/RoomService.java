@@ -41,22 +41,26 @@ public class RoomService {
 
         System.out.println("datesRange = " + datesRange.toString());
 
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<RoomEntity> criteria = builder.createQuery(RoomEntity.class);
-        Root<RoomEntity> roomEntityRoot = criteria.from(RoomEntity.class);
 
-        criteria.select(roomEntityRoot);
+        List<RoomEntity> rooms = em.createNativeQuery(
+                "with " +
+                        " dates (RoomEntity_id, bookedDates ) as ( select " +
+                        "RoomEntity_id, bookedDates from RoomEntity_bookedDates )  " +
 
-        List<Predicate> bookedDates = datesRange.stream().map(s -> builder.isNotMember(s, roomEntityRoot.get("bookedDates")))
-                .collect(Collectors.toList());
+                        "select DISTINCT r.id " +
+                        "from RoomEntity r, dates d " +
+                        "where  " +
+                        "d.RoomEntity_id = r.id " +
+                        "and :bookedDates not in  " +
+                        " ( select " +
+                        "b.bookedDates from RoomEntity_bookedDates b " +
+                        "where r.id =  b.RoomEntity_id )  " +
 
-        criteria.where(builder.equal(roomEntityRoot.get("roomType"), parametrizedRoom.getRoomType()),
-                builder.equal(roomEntityRoot.get("windowsExposure"), parametrizedRoom.getWindowsExposure()));
-        criteria.where(bookedDates.toArray(new Predicate[bookedDates.size()]));
-        criteria.orderBy(builder.asc(roomEntityRoot.get("id")));
-
-        List<RoomEntity> rooms = em.createQuery(criteria)
+                        //    "where r.id = b.RoomEntity_id "
+                        //     ") " +
+                        "order by r.id ").setParameter("bookedDates", datesRange)
                 .getResultList();
+
 
         LOGGER.debug("Number of rooms that meet the conditions: " + rooms.size());
         LOGGER.trace("Found rooms: " + rooms.toString());
