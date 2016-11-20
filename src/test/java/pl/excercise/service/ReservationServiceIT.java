@@ -8,6 +8,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import pl.excercise.database.ReservationDB;
+import pl.excercise.database.RoomDB;
 import pl.excercise.model.Guest;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
@@ -57,7 +59,9 @@ public class ReservationServiceIT {
                 .addClass(ReservationService.class)
                 .addClass(GuestSessionScoped.class)
                 .addClass(Reservation.class)
-                .addClass(Guest.class);
+                .addClass(Guest.class)
+                .addClass(RoomDB.class)
+                .addClass(ReservationDB.class);
 
     }
 
