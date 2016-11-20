@@ -8,6 +8,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import pl.excercise.database.RoomDB;
 import pl.excercise.model.room.ParametrizedRoom;
 import pl.excercise.model.room.RoomEntity;
 import pl.excercise.model.room.RoomType;
@@ -50,7 +51,8 @@ public class RoomServiceIT {
                 .addClass(DaysCount.class)
                 .addClass(ParametrizedRoom.class)
                 .addClass(RoomType.class)
-                .addClass(WindowsExposure.class);
+                .addClass(WindowsExposure.class)
+                .addClass(RoomDB.class);
 
     }
 

@@ -85,6 +85,8 @@ public class Reservation {
         return new Reservation(guest, room, cancelledFlag, bookedFrom, bookedTo);
     }
 
+
+
     @Override
     public String toString() {
         return "Reservation{" +
