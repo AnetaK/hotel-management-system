@@ -3,15 +3,16 @@ package pl.excercise.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pl.excercise.database.ReservationDB;
+import pl.excercise.database.RoomDB;
 import pl.excercise.model.Guest;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
 import pl.excercise.model.room.RoomEntity;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,8 +21,11 @@ public class ReservationService {
 
     private static final Logger LOGGER = LogManager.getLogger(ReservationService.class);
 
-    @PersistenceContext
-    EntityManager em;
+    @EJB
+    ReservationDB reservationDB;
+
+    @EJB
+    RoomDB roomDB;
 
     public void createReservation(GuestSessionScoped guest, ParametrizedRoom room, long id) {
 
@@ -46,31 +50,26 @@ public class ReservationService {
 
         System.out.println("reservation = " + reservation.toString());
 
-        em.persist(reservation);
+        reservationDB.persistReservation(reservation);
 
         LOGGER.debug("Reservation persisted succesfully");
 
-        RoomEntity oldRoomEntity = em.find(RoomEntity.class, id);
+        RoomEntity oldRoomEntity = roomDB.extractRoomById(id);
 
         List<String> extractedBookedDates = oldRoomEntity.getBookedDates();
         LOGGER.trace("Booked dates number before update: " + extractedBookedDates.size());
 
         extractedBookedDates.addAll(bookedDates);
 
-        updateBookedDates(id, extractedBookedDates);
+        roomDB.updateBookedDates(id, extractedBookedDates);
 
-        RoomEntity newRoomEntity = em.find(RoomEntity.class, id);
+        RoomEntity newRoomEntity = roomDB.extractRoomById(id);
         LOGGER.trace("Booked dates number after update: " + newRoomEntity.getBookedDates().size());
 
     }
 
     public List<Reservation> extractReservationsForGuest(GuestSessionScoped guest) {
-        List<Reservation> resultList = em.createQuery("select r from Reservation r " +
-                "where r.guest.firstName=:firstName and r.guest.lastName=:lastName ")
-                .setParameter("firstName", guest.getFirstName())
-                .setParameter("lastName", guest.getLastName())
-                .getResultList();
-
+        List<Reservation> resultList = reservationDB.extractReservationsForGuest(guest);
 
         LOGGER.trace("Reservations number extracted from DB: " + resultList.size());
 
@@ -81,29 +80,27 @@ public class ReservationService {
     }
 
     public void cancelReservation(long id) {
-        Reservation reservation = em.find(Reservation.class, id);
+        Reservation reservation = reservationDB.extractReservationById(id);
 
         DaysCount dates = new DaysCount();
         List<String> datesToRemove = dates.returnDaysList(reservation.getBookedFrom(), reservation.getBookedTo());
 
         long roomId = reservation.getRoom().getId();
-        em.createQuery("update Reservation set cancelledFlag = true where id=:id ")
-                .setParameter("id", id)
-                .executeUpdate();
+        reservationDB.setCancelledFlag(id);
 
-        Reservation newReservation = em.find(Reservation.class, id);
+        Reservation newReservation = reservationDB.extractReservationById(id);
         LOGGER.trace("Cancelled flag: " + newReservation.getCancelledFlag());
 
-        RoomEntity roomEntity = em.find(RoomEntity.class, roomId);
+        RoomEntity roomEntity = roomDB.extractRoomById(roomId);
 
         List<String> roomDates = roomEntity.getBookedDates();
         LOGGER.trace("Number of booked dates before cancelling: " + roomDates.size());
 
         roomDates.removeIf(r -> datesToRemove.contains(r));
 
-        updateBookedDates(roomEntity.getId(), roomDates);
+        roomDB.updateBookedDates(roomEntity.getId(), roomDates);
 
-        RoomEntity newRoomEntity = em.find(RoomEntity.class, roomId);
+        RoomEntity newRoomEntity = roomDB.extractRoomById(roomId);
 
         LOGGER.trace("Number of booked dates after cancelling: " + newRoomEntity.getBookedDates().size());
 
@@ -111,11 +108,5 @@ public class ReservationService {
 
     }
 
-    private void updateBookedDates(long id, List<String> bookedDates) {
-        em.createNativeQuery("update  RoomEntity_bookedDates set bookedDates = :bookedDates where RoomEntity_id=:id  ")
-                .setParameter("id", id)
-                .setParameter("bookedDates", bookedDates)
-                .executeUpdate();
 
-    }
 }

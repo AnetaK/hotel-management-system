@@ -49,4 +49,16 @@ public class RoomDB {
 
         return rooms;
     }
+
+    public RoomEntity extractRoomById(long id) {
+        return em.find(RoomEntity.class,id);
+    }
+
+    public void updateBookedDates(long id, List<String> bookedDates) {
+        em.createNativeQuery("update  RoomEntity_bookedDates set bookedDates = :bookedDates where RoomEntity_id=:id  ")
+                .setParameter("id", id)
+                .setParameter("bookedDates", bookedDates)
+                .executeUpdate();
+
+    }
 }

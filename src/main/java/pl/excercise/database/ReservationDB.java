@@ -1,7 +1,38 @@
 package pl.excercise.database;
 
+import pl.excercise.model.GuestSessionScoped;
+import pl.excercise.model.Reservation;
+
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Stateless
 public class ReservationDB {
+
+    @PersistenceContext
+    EntityManager em;
+
+    public void persistReservation(Reservation reservation) {
+        em.persist(reservation);
+    }
+
+    public List<Reservation> extractReservationsForGuest(GuestSessionScoped guest) {
+        return em.createQuery("select r from Reservation r " +
+                "where r.guest.firstName=:firstName and r.guest.lastName=:lastName ")
+                .setParameter("firstName", guest.getFirstName())
+                .setParameter("lastName", guest.getLastName())
+                .getResultList();
+    }
+
+    public Reservation extractReservationById(long id) {
+        return em.find(Reservation.class,id);
+    }
+
+    public void setCancelledFlag(long id) {
+        em.createQuery("update Reservation set cancelledFlag = true where id=:id ")
+                .setParameter("id", id)
+                .executeUpdate();
+    }
 }
