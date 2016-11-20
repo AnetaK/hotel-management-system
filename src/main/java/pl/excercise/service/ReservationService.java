@@ -69,7 +69,10 @@ public class ReservationService {
     }
 
     public List<Reservation> extractReservationsForGuest(GuestSessionScoped guest) {
-        List<Reservation> resultList = reservationDB.extractReservationsForGuest(guest);
+        List<Reservation> resultList = reservationDB.extractReservationsForGuest(new Guest()
+                        .withFirstName(guest.getFirstName())
+                        .withLastName(guest.getLastName())
+                        .build());
 
         LOGGER.trace("Reservations number extracted from DB: " + resultList.size());
 

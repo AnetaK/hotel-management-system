@@ -1,5 +1,6 @@
 package pl.excercise.database;
 
+import pl.excercise.model.Guest;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 
@@ -18,11 +19,10 @@ public class ReservationDB {
         em.persist(reservation);
     }
 
-    public List<Reservation> extractReservationsForGuest(GuestSessionScoped guest) {
+    public List<Reservation> extractReservationsForGuest(Guest guest) {
         return em.createQuery("select r from Reservation r " +
-                "where r.guest.firstName=:firstName and r.guest.lastName=:lastName ")
-                .setParameter("firstName", guest.getFirstName())
-                .setParameter("lastName", guest.getLastName())
+                "where r.guest=:guest ")
+                .setParameter("guest", guest)
                 .getResultList();
     }
 
