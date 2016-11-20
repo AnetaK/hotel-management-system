@@ -69,6 +69,8 @@ public class RoomEntity implements Serializable {
         return new RoomEntity(roomType, bookedDates, windowsExposure);
     }
 
+
+
     @Override
     public String toString() {
         return "Room{" +
