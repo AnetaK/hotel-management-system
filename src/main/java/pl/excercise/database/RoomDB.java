@@ -1,6 +1,5 @@
 package pl.excercise.database;
 
-import pl.excercise.model.room.ParametrizedRoom;
 import pl.excercise.model.room.RoomEntity;
 import pl.excercise.model.room.RoomType;
 import pl.excercise.model.room.WindowsExposure;
