@@ -85,7 +85,30 @@ public class Reservation {
         return new Reservation(guest, room, cancelledFlag, bookedFrom, bookedTo);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Reservation that = (Reservation) o;
+
+        if (cancelledFlag != that.cancelledFlag) return false;
+        if (guest != null ? !guest.equals(that.guest) : that.guest != null) return false;
+        if (room != null ? !room.equals(that.room) : that.room != null) return false;
+        if (bookedFrom != null ? !bookedFrom.equals(that.bookedFrom) : that.bookedFrom != null) return false;
+        return bookedTo != null ? bookedTo.equals(that.bookedTo) : that.bookedTo == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = guest != null ? guest.hashCode() : 0;
+        result = 31 * result + (room != null ? room.hashCode() : 0);
+        result = 31 * result + (cancelledFlag ? 1 : 0);
+        result = 31 * result + (bookedFrom != null ? bookedFrom.hashCode() : 0);
+        result = 31 * result + (bookedTo != null ? bookedTo.hashCode() : 0);
+        return result;
+    }
 
     @Override
     public String toString() {
