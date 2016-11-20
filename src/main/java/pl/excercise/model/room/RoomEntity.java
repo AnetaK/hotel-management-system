@@ -69,7 +69,26 @@ public class RoomEntity implements Serializable {
         return new RoomEntity(roomType, bookedDates, windowsExposure);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        RoomEntity that = (RoomEntity) o;
+
+        if (roomType != null ? !roomType.equals(that.roomType) : that.roomType != null) return false;
+        if (bookedDates != null ? !bookedDates.equals(that.bookedDates) : that.bookedDates != null) return false;
+        return windowsExposure != null ? windowsExposure.equals(that.windowsExposure) : that.windowsExposure == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = roomType != null ? roomType.hashCode() : 0;
+        result = 31 * result + (bookedDates != null ? bookedDates.hashCode() : 0);
+        result = 31 * result + (windowsExposure != null ? windowsExposure.hashCode() : 0);
+        return result;
+    }
 
     @Override
     public String toString() {
