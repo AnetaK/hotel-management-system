@@ -53,10 +53,24 @@
                 <input type="hidden" value="${availableTo}" name="availableTo"/>
 
                 <h4>Type your first name</h4>
-                <input type="text" name="firstName"/>
+                <c:choose>
+                    <c:when test="${not empty guest.firstName}">
+                        <input type="text" name="firstName" value="${guest.firstName}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <input type="text" name="firstName">
+                    </c:otherwise>
+                </c:choose>
 
                 <h4>Type your last name</h4>
-                <input type="text" name="lastName"/>
+                <c:choose>
+                    <c:when test="${not empty guest.lastName}">
+                        <input type="text" name="lastName" value="${guest.lastName}"/>
+                    </c:when>
+                    <c:otherwise>
+                        <input type="text" name="lastName">
+                    </c:otherwise>
+                </c:choose>
                 <br>
                 <button type="submit"
                         name="book">Book

@@ -3,12 +3,14 @@ package pl.excercise.web;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.room.ParametrizedRoom;
 import pl.excercise.model.room.RoomEntity;
 import pl.excercise.service.RoomService;
 import pl.excercise.service.Validate;
 
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,6 +27,9 @@ public class AvailableRoomsServlet extends HttpServlet {
 
     @EJB
     RoomService roomService;
+
+    @Inject
+    GuestSessionScoped guest;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -53,6 +58,7 @@ public class AvailableRoomsServlet extends HttpServlet {
             request.setAttribute("availableFrom", availableFrom);
             request.setAttribute("availableTo", availableTo);
             request.setAttribute("availableRooms", availableRooms);
+            request.setAttribute("guest", guest);
 
 
             RequestDispatcher dispatcher = request.getRequestDispatcher("ViewRooms.jsp");
