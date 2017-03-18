@@ -1,0 +1,23 @@
+version: '2'
+services:
+  sql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hms
+    networks:
+      - network
+  jboss:
+    build: ./jboss
+    ports:
+      - 8080:8080
+      - 9990:9990
+      - 5005:5005
+    volumes:
+      - ../target/hotel-mgmt-system.war:/opt/jboss/wildfly/standalone/deployments/hotel-mgmt-system.war
+    networks:
+      - network
+networks:
+  network:
+    driver: bridge
+
