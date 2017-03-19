@@ -1,6 +1,5 @@
 package pl.excercise.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import pl.excercise.model.room.RoomEntity;
 
 import javax.persistence.*;
@@ -12,11 +11,9 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @JsonProperty
     @Embedded
     private Guest guest;
 
-    @JsonProperty
     @ManyToOne
     private RoomEntity room;
 

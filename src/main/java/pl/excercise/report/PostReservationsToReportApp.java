@@ -1,6 +1,7 @@
 package pl.excercise.report;
 
 import pl.excercise.model.Reservation;
+import pl.excercise.model.ReservationDTO;
 
 import javax.ejb.Stateless;
 import javax.ws.rs.client.ClientBuilder;
@@ -8,6 +9,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 @Stateless
@@ -22,15 +24,24 @@ public class PostReservationsToReportApp {
 //        TODO: Parameter file with optional address
         URI uri = UriBuilder.fromUri("http://localhost:18080/hms-report/api/input/reservations").build();
 
-//        String json = new Gson().toJson(reservations);
+        List<ReservationDTO> reservationDTOs = new ArrayList<>();
 
-
+        for (Reservation r :
+                reservations) {
+            reservationDTOs.add(new ReservationDTO()
+                    .withGuestName(r.getGuest().getFirstName())
+                    .withGuestSurname(r.getGuest().getLastName())
+                    .withId(r.getId())
+                    .withRoomId(r.getRoom().getId())
+                    .build()
+            );
+        }
 
         Response post = ClientBuilder.newClient()
                 .target(uri)
                 .request()
                 .acceptEncoding("UTF-8")
-                .post(Entity.json(reservations.get(0)));
+                .post(Entity.json(reservationDTOs));
 
 
         System.out.println("response = " + post.getStatus() + " from " + uri);
