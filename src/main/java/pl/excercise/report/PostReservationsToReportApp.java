@@ -4,6 +4,7 @@ import pl.excercise.model.Reservation;
 import pl.excercise.model.ReservationDTO;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
@@ -15,16 +16,20 @@ import java.util.List;
 @Stateless
 public class PostReservationsToReportApp {
 
+    @Inject
+    ReportPropsConfiguration configuration;
+
     public void postReportData(List<Reservation> reservations) {
 
-//        This uri should be used if docker in this app is runned
-//        URI uri = UriBuilder.fromUri("http://jboss_report:8080/hms-report/api/input/reservations").build();
-
-//        This uri should be used in case this app is runned with mvn package wildfly:run
-//        TODO: Parameter file with optional address
-        URI uri = UriBuilder.fromUri("http://localhost:18080/hms-report/api/input/reservations").build();
+        URI uri = UriBuilder.fromUri("http://" + configuration.getReportHost() + ":" + configuration.getReportHostPort())
+                .segment("hms-report")
+                .segment("api")
+                .segment("input")
+                .segment("reservations")
+                .build();
 
         List<ReservationDTO> reservationDTOs = new ArrayList<>();
+        System.out.println("uri = " + uri.toString());
 
         for (Reservation r :
                 reservations) {

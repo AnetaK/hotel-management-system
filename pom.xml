@@ -111,6 +111,11 @@
 
     <build>
         <finalName>hotel-mgmt-system</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -173,6 +178,31 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-localhost</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>docker</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources-docker</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
