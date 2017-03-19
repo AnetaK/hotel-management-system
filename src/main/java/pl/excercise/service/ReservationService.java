@@ -112,4 +112,10 @@ public class ReservationService {
     }
 
 
+    public List<Reservation> extractAllReservations() {
+        List<Reservation> reservations = reservationDB.extarctAllReservations();
+        LOGGER.trace("Number of extracted reservations: " + reservations.size());
+
+        return reservations;
+    }
 }

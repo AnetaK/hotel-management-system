@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import pl.excercise.model.GuestSessionScoped;
 import pl.excercise.model.Reservation;
 import pl.excercise.model.room.ParametrizedRoom;
-import pl.excercise.report.PostReservationsToReportApp;
 import pl.excercise.service.ReservationService;
 import pl.excercise.service.Validate;
 
@@ -31,9 +30,6 @@ public class BookingServlet extends HttpServlet {
 
     @EJB
     ReservationService reservationService;
-
-    @EJB
-    PostReservationsToReportApp postReservations;
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -65,8 +61,6 @@ public class BookingServlet extends HttpServlet {
             LOGGER.debug("Room is booked");
 
             List<Reservation> reservationList = reservationService.extractReservationsForGuest(guest);
-
-            postReservations.postReportData(reservationList);
 
             request.getSession().setAttribute("emptyList", reservationList.isEmpty());
             request.getSession().setAttribute("reservation", reservationList);

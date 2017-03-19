@@ -35,4 +35,10 @@ public class ReservationDB {
                 .setParameter("id", id)
                 .executeUpdate();
     }
+
+    public List<Reservation> extarctAllReservations() {
+        return em.createQuery("select r from Reservation r ")
+                .getResultList();
+
+    }
 }

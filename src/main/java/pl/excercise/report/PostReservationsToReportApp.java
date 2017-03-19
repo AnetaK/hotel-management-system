@@ -19,7 +19,7 @@ public class PostReservationsToReportApp {
     @Inject
     ReportPropsConfiguration configuration;
 
-    public void postReportData(List<Reservation> reservations) {
+    public Response post(List<Reservation> reservations) {
 
         URI uri = UriBuilder.fromUri("http://" + configuration.getReportHost() + ":" + configuration.getReportHostPort())
                 .segment("hms-report")
@@ -50,5 +50,6 @@ public class PostReservationsToReportApp {
 
 
         System.out.println("response = " + post.getStatus() + " from " + uri);
+        return post;
     }
 }
